@@ -4,12 +4,15 @@
 
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
+../Map.cpp \
 ../main.cpp 
 
 OBJS += \
+./Map.o \
 ./main.o 
 
 CPP_DEPS += \
+./Map.d \
 ./main.d 
 
 

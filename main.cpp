@@ -7,13 +7,14 @@
 
 #include <HamsterAPIClientCPP/Hamster.h>
 #include <iostream>
+#include "Map.h"
 using namespace std;
 using namespace HamsterAPI;
 HamsterAPI::Hamster * hamster;
 
 // Each pixel = 0.05meters
 // means: 1meter = 20pixels
-double OPEN_CV_RESOLUTION = 20;
+double OPEN_CV_RESOLUTION = 0.05;
 
 void getScansBetween(double min, double max, std::vector<double> & distances) {
 	HamsterAPI::LidarScan scan = hamster->getLidarScan();
@@ -129,10 +130,14 @@ void findObstacles(cv::Mat image) {
 			double xObs = pose.getX() + scan.getDistance(i)*cos(radians);
 			double yObs = pose.getY() + scan.getDistance(i)*sin(radians);
 
+			// If each pixel = 0.05m
+			// then 1m = 20 pixels
+			double pixelsPerMeter = 1 / OPEN_CV_RESOLUTION;
+
 			// The + 200 is because the robot is in the middle of the
 			// map so we need to shift the coordinates
-			int xObsImage = yObs * OPEN_CV_RESOLUTION + 200;
-			int yObsImage = xObs * OPEN_CV_RESOLUTION + 200;
+			int xObsImage = yObs * pixelsPerMeter + 200;
+			int yObsImage = xObs * pixelsPerMeter + 200;
 
 			image.at<cv::Vec3b>(xObsImage, yObsImage)[0] = 255;
 			image.at<cv::Vec3b>(xObsImage, yObsImage)[1] = 0;
@@ -151,7 +156,7 @@ void findObstacles(cv::Mat image) {
 
 }
 
-int main(int argc, char ** argv) {
+int main2OLd(int argc, char ** argv) {
 	try {
 		hamster = new HamsterAPI::Hamster(1);
 		cv::namedWindow("myWindow");
@@ -265,4 +270,63 @@ int main1() {
 	return 0;
 
 }
+
+// The sizes in cm
+int getNumOfPixelsToBlow (double robotHeight, double robotWidth) {
+
+	// Size in m
+	double height = robotHeight / 100;
+	double width = robotWidth / 100;
+
+	double blowSize = max(height, width) / 2;
+
+	return blowSize / OPEN_CV_RESOLUTION;
+}
+
+OccupancyGrid getBlownGrid (OccupancyGrid grid, int blowRadius) {
+
+	OccupancyGrid blownGrid = grid;
+
+	for (int i=0; i<grid.getHeight(); i++) {
+		for (int j=0; j<grid.getWidth(); j++) {
+
+			if (grid.getCell(i, j) == CELL_OCCUPIED) {
+
+				for (int i2 = i-blowRadius; i2<=i+blowRadius; i2++) {
+					for (int j2 = j-blowRadius; j2<=j+blowRadius; j2++) {
+
+						if (i2 >= 0 && i2 < grid.getHeight() && j2 >=0 && j2 < grid.getWidth()) {
+							blownGrid.setCell(i2, j2, CELL_OCCUPIED);
+						}
+					}
+				}
+			}
+		}
+	}
+
+	return blownGrid;
+}
+
+int main() {
+	hamster = new Hamster(1);
+	sleep(3);
+
+	OccupancyGrid grid = hamster->getSLAMMap();
+
+	int blowRadius = getNumOfPixelsToBlow(20, 20);
+
+	OccupancyGrid blownGrid = getBlownGrid(grid, blowRadius);
+	Map map(blownGrid);
+
+//	cout << "grid resolution = " << grid.getResolution() << endl;
+
+	while (hamster->isConnected()) {
+		map.show();
+		sleep(0.2);
+	}
+
+	return 0;
+}
+
+
 
