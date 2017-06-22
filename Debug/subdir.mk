@@ -5,14 +5,17 @@
 # Add inputs and outputs from these tool invocations to the build variables 
 CPP_SRCS += \
 ../Map.cpp \
+../PathPlanner.cpp \
 ../main.cpp 
 
 OBJS += \
 ./Map.o \
+./PathPlanner.o \
 ./main.o 
 
 CPP_DEPS += \
 ./Map.d \
+./PathPlanner.d \
 ./main.d 
 
 

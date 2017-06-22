@@ -8,6 +8,7 @@
 #include <HamsterAPIClientCPP/Hamster.h>
 #include <iostream>
 #include "Map.h"
+#include "PathPlanner.h"
 using namespace std;
 using namespace HamsterAPI;
 HamsterAPI::Hamster * hamster;
@@ -307,7 +308,31 @@ OccupancyGrid getBlownGrid (OccupancyGrid grid, int blowRadius) {
 	return blownGrid;
 }
 
+void EVND2() {
+	hamster = new Hamster(1);
+		sleep(3);
+
+		OccupancyGrid grid = hamster->getSLAMMap();
+
+		int blowRadius = getNumOfPixelsToBlow(20, 20);
+
+		OccupancyGrid blownGrid = getBlownGrid(grid, blowRadius);
+		Map map(blownGrid);
+
+	//	cout << "grid resolution = " << grid.getResolution() << endl;
+
+		while (hamster->isConnected()) {
+			map.show();
+			sleep(0.2);
+		}
+}
+
+typedef vector<pair<int,int> > Path;
+
 int main() {
+
+	// EVND3
+
 	hamster = new Hamster(1);
 	sleep(3);
 
@@ -318,12 +343,16 @@ int main() {
 	OccupancyGrid blownGrid = getBlownGrid(grid, blowRadius);
 	Map map(blownGrid);
 
-//	cout << "grid resolution = " << grid.getResolution() << endl;
+	PathPlanner pln(blownGrid, 308, 436);
+	Path path = pln.computeShortestPath(411, 350);
 
 	while (hamster->isConnected()) {
 		map.show();
 		sleep(0.2);
 	}
+
+	int t = 0;
+	t+=9;
 
 	return 0;
 }
