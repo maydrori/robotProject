@@ -343,8 +343,36 @@ int main() {
 	OccupancyGrid blownGrid = getBlownGrid(grid, blowRadius);
 	Map map(blownGrid);
 
-	PathPlanner pln(blownGrid, 308, 436);
-	Path path = pln.computeShortestPath(411, 350);
+//	// Paint the start position in blue (30cm of robot = 6 pixels)
+//	for (int i=470; i<476;i++) {
+//		for (int j=437; j<443; j++) {
+//			map.paintCell(i, j, 0,0,255);
+//		}
+//	}
+//
+//	// Paint the goal position in green (30cm of robot = 6 pixels)
+//	for (int i=475; i<481;i++) {
+//		for (int j=470; j<476; j++) {
+//			map.paintCell(i, j, 0,255,0);
+//		}
+//	}
+
+	// Paint the start position in blue
+	map.paintCell(470 , 437, 0,0,255);
+
+	// Paint the goal position in green
+	map.paintCell(475 , 470, 0,255,0);
+
+	PathPlanner pln(blownGrid, 470, 437);
+	Path path = pln.computeShortestPath(475, 470);
+
+	// Paint the path in red
+	for (int i = 0; i < path.size(); ++i) {
+
+		map.paintCell(path[path.size() - 1 - i].first,
+				   	  path[path.size() - 1 - i].second,
+					  255,0,0);
+	}
 
 	while (hamster->isConnected()) {
 		map.show();

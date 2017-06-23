@@ -9,6 +9,7 @@
 #define MAP_H_
 #include <HamsterAPIClientCPP/Hamster.h>
 using namespace HamsterAPI;
+using namespace std;
 
 class Map {
 private:
@@ -19,7 +20,8 @@ private:
 public:
 	Map(OccupancyGrid &grid);
 	void show() const;
-//	void blowGrid(int blowRadius);
+	void paintCell(int i, int j, int pixelR, int pixelG, int pixelB);
+	void paintCell(int i, int j, int pixel);
 	virtual ~Map();
 };
 

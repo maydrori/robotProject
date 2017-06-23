@@ -194,7 +194,7 @@ Path PathPlanner::computeShortestPath(int destRow, int destCol) {
 			// list or if it is blocked, then ignore it.
 			// Else do the following
 			else if (!closedList[currSuccessor->row][currSuccessor->col] &&
-					mat[currSuccessor->row][currSuccessor->col]) {
+				mat[currSuccessor->row][currSuccessor->col]) {
 				gNew = currNode->g + 1.0;
 				hNew = calculateHValue(currSuccessor, dest);
 				fNew = gNew + hNew;

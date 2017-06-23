@@ -15,6 +15,7 @@ Map::Map(OccupancyGrid &grid) :grid(grid) {
 void Map::initMap() {
 	mat = cv::Mat(grid.getHeight(), grid.getWidth(), CV_8UC3);
 
+	cout << "Grid size: " << grid.getHeight() << " * " << grid.getWidth() << endl;
 	for (int i=0; i<grid.getHeight(); i++) {
 		for (int j=0; j<grid.getWidth(); j++) {
 			initCell(i,j);
@@ -27,39 +28,29 @@ void Map::initCell (int i, int j) {
 	int pixel;
 	if (cell == CELL_FREE) {
 		pixel = 255;
+//		if (i<400)cout << i << " * " << j << endl;
+
 	}
 	else if (cell == CELL_OCCUPIED) pixel = 0;
 	else pixel = 128;
 
-	mat.at<cv::Vec3b>(i,j)[0] = pixel;
-	mat.at<cv::Vec3b>(i,j)[1] = pixel;
-	mat.at<cv::Vec3b>(i,j)[2] = pixel;
+	paintCell(i, j, pixel);
+}
+
+void Map::paintCell (int i, int j, int pixelR, int pixelG, int pixelB) {
+	mat.at<cv::Vec3b>(i,j)[0] = pixelB;
+	mat.at<cv::Vec3b>(i,j)[1] = pixelG;
+	mat.at<cv::Vec3b>(i,j)[2] = pixelR;
+}
+
+void Map::paintCell (int i, int j, int pixel) {
+	paintCell(i, j, pixel, pixel, pixel);
 }
 
 void Map::show () const{
 	cv::imshow("OccupancyGrid-view", mat);
 	cv::waitKey(1);
 }
-
-//void Map::blowGrid (int blowRadius) {
-//
-//	for (int i=0; i<grid.getHeight(); i++) {
-//		for (int j=0; j<grid.getWidth(); j++) {
-//
-//			if (grid.getCell(i, j) == CELL_OCCUPIED) {
-//
-//				for (int i2 = i-blowRadius; i2<=i+blowRadius; i2++) {
-//					for (int j2 = j-blowRadius; j2<=j+blowRadius; j2++) {
-//
-//						if (i2 >= 0 && i2 < grid.getHeight() && j2 >=0 && j2 < grid.getWidth()) {
-//							grid.setCell(i2, j2, CELL_OCCUPIED);
-//						}
-//					}
-//				}
-//			}
-//		}
-//	}
-//}
 
 Map::~Map() {
 	cv::destroyWindow("OccupancyGrid-view");
