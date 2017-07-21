@@ -13,13 +13,19 @@ using namespace std;
 
 class Map {
 private:
+	Configuration* config;
 	OccupancyGrid& grid;
+	OccupancyGrid * coarseGrid;
 	cv::Mat mat;
-	void initMap();
-	void initCell(int i, int j);
+	int robotHeightInPixels;
+	int robotWidthInPixels;
+
+	void initMat(OccupancyGrid &grid);
+	void initCell(OccupancyGrid &grid, int i, int j);
+	void convertToCoarseGrid();
 public:
 	Map(OccupancyGrid &grid);
-	void show() const;
+	void show();
 	void paintCell(int i, int j, int pixelR, int pixelG, int pixelB);
 	void paintCell(int i, int j, int pixel);
 	virtual ~Map();
