@@ -53,7 +53,7 @@ void PathPlanner::buildGraph() {
 
 struct NodeCostComparator {
 	bool operator() (const Node* n1, const Node* n2) {
-		return n1->f < n2->f;
+		return n1->f > n2->f;
 	}
 };
 
