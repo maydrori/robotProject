@@ -1,21 +1,21 @@
-/*
- * HamsterAPIClientSimpleBehaviourExample.cpp
- *
- *  Created on: Aug 10, 2016
- *      Author: ofir
- */
-
 #include <HamsterAPIClientCPP/Hamster.h>
 #include <iostream>
 #include "Map.h"
 #include "PathPlanner.h"
+
+#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
+#define CONFIG_PATH "C:\\Users\\Meir-pc\\Desktop\\robotics\\params\\parameters.txt"
+#else
+#define CONFIG_PATH "/home/colman/Desktop/cyka/params/parameters.txt"
+#endif
+
 using namespace std;
 using namespace HamsterAPI;
 HamsterAPI::Hamster * hamster;
 
 // Each pixel = 0.05meters
 // means: 1meter = 20pixels
-double OPEN_CV_RESOLUTION = 0.05;
+//double OPEN_CV_RESOLUTION = 0.05;
 
 void getScansBetween(double min, double max, std::vector<double> & distances) {
 	HamsterAPI::LidarScan scan = hamster->getLidarScan();
@@ -157,191 +157,22 @@ void findObstacles(cv::Mat image) {
 
 }
 
-int main2OLd(int argc, char ** argv) {
-	try {
-		hamster = new HamsterAPI::Hamster(1);
-		cv::namedWindow("myWindow");
-		cv::Mat image(400, 400, CV_8UC3, cv::Scalar(0,0,0));
 
-		while (hamster->isConnected()) {
-			try {
-				findObstacles(image);
-
-				if (isFrontFree())
-					moveForward();
-				else {
-					stopMoving();
-					if (isLeftFree())
-						turnLeft();
-					else if (isRightFree())
-						turnRight();
-					else if (isBackFree())
-						moveBackwards();
-					else
-						HamsterAPI::Log::i("Client", "I am stuck!");
-				}
-
-				// Speed Getter
-				// HamsterAPI::Speed speed = hamster.getSpeed();
-			} catch (const HamsterAPI::HamsterError & message_error) {
-				HamsterAPI::Log::i("Client", message_error.what());
-			}
-
-		}
-	} catch (const HamsterAPI::HamsterError & connection_error) {
-		HamsterAPI::Log::i("Client", connection_error.what());
-	}
-	return 0;
-}
-
-int oldMain2(int argc, char ** argv) {
-	try {
-		hamster = new HamsterAPI::Hamster(1);
-		/*OccupancyGrid ogrid = hamster->getSLAMMap();
-		 cout<< "resolution: "<< ogrid.getResolution()<<endl;
-		 cout<< "Width: "<< ogrid.getWidth()<<endl;
-		 cout<< "height: "<< ogrid.getHeight()<<endl;
-		 */
-		while (hamster->isConnected()) {
-			try {
-				HamsterAPI::LidarScan ld = hamster->getLidarScan();
-				if (ld.getDistance(180) < 0.4) {
-					hamster->sendSpeed(-0.5, 0);
-					cout << "Front: " << ld.getDistance(180) << endl;
-				} else if (ld.getDistance(180) < 0.8) {
-					hamster->sendSpeed(0.5, 45);
-					cout << "Front: " << ld.getDistance(180) << endl;
-				}
-				else
-					hamster->sendSpeed(1.0, 0);
-				//cout<<"Front: "<<ld.getDistance(180)<<endl;
-				//cout<<"Left: "<<ld.getDistance(90)<<endl;
-				//cout<<"Right: "<<ld.getDistance(270)<<endl;
-			} catch (const HamsterAPI::HamsterError & message_error) {
-				HamsterAPI::Log::i("Client", message_error.what());
-			}
-
-		}
-	} catch (const HamsterAPI::HamsterError & connection_error) {
-		HamsterAPI::Log::i("Client", connection_error.what());
-	}
-	return 0;
-}
-int main1() {
-	try {
-//		HamsterClientParameters params =  HamsterClientParameters();
-//		params.base_address = "127.0.0";
-//		params.port = 8102;
-		hamster = new HamsterAPI::Hamster(1);
-
-		cv::namedWindow("OccupancyGrid-view");
-		while (hamster->isConnected()) {
-			try {
-
-				OccupancyGrid ogrid = hamster->getSLAMMap();
-				int width = ogrid.getWidth();
-				int height = ogrid.getHeight();
-				unsigned char pixel;
-				//CvMat* M = cvCreateMat(width, height, CV_8UC1);
-				cv::Mat m = cv::Mat(width, height,CV_8UC1);
-
-				for (int i = 0; i < height; i++)
-					for (int j = 0; j < width; j++) {
-						if (ogrid.getCell(i, j) == CELL_FREE)
-							pixel = 255;
-						else if (ogrid.getCell(i, j) == CELL_OCCUPIED)
-							pixel = 0;
-						else
-							pixel = 128;
-						//cvmSet(M, i, j, pixel);
-						m.at<unsigned char>(i,j) = pixel;
-					}
-
-				cv::imshow("OccupancyGrid-view",m);
-				cv::waitKey(1);
-
-			} catch (const HamsterAPI::HamsterError & message_error) {
-				HamsterAPI::Log::i("error1", message_error.what());
-			}
-
-		}
-	} catch (const HamsterAPI::HamsterError & connection_error) {
-		HamsterAPI::Log::i("error2", connection_error.what());
-	}
-	return 0;
-
-}
-
-// The sizes in cm
-int getNumOfPixelsToBlow (double robotHeight, double robotWidth) {
-
-	// Size in m
-	double height = robotHeight / 100;
-	double width = robotWidth / 100;
-
-	double blowSize = max(height, width) / 2;
-
-	return blowSize / OPEN_CV_RESOLUTION;
-}
-
-OccupancyGrid getBlownGrid (OccupancyGrid grid, int blowRadius) {
-
-	OccupancyGrid blownGrid = grid;
-
-	for (int i=0; i<grid.getHeight(); i++) {
-		for (int j=0; j<grid.getWidth(); j++) {
-
-			if (grid.getCell(i, j) == CELL_OCCUPIED) {
-
-				for (int i2 = i-blowRadius; i2<=i+blowRadius; i2++) {
-					for (int j2 = j-blowRadius; j2<=j+blowRadius; j2++) {
-
-						if (i2 >= 0 && i2 < grid.getHeight() && j2 >=0 && j2 < grid.getWidth()) {
-							blownGrid.setCell(i2, j2, CELL_OCCUPIED);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return blownGrid;
-}
-
-void EVND2() {
-	hamster = new Hamster(1);
-		sleep(3);
-
-		OccupancyGrid grid = hamster->getSLAMMap();
-
-		int blowRadius = getNumOfPixelsToBlow(20, 20);
-
-		OccupancyGrid blownGrid = getBlownGrid(grid, blowRadius);
-		Map map(blownGrid);
-
-	//	cout << "grid resolution = " << grid.getResolution() << endl;
-
-		while (hamster->isConnected()) {
-			map.show();
-			sleep(0.2);
-		}
-}
 
 typedef vector<pair<int,int> > Path;
 
 int main() {
 
-	// EVND3
+	Configuration::Init(CONFIG_PATH);
+	Configuration* config = Configuration::Instance();
 
+	// Init the hamster
 	hamster = new Hamster(1);
 	sleep(3);
 
 	OccupancyGrid grid = hamster->getSLAMMap();
-
-	int blowRadius = getNumOfPixelsToBlow(20, 20);
-
-	OccupancyGrid blownGrid = getBlownGrid(grid, blowRadius);
-	Map map(blownGrid);
+		
+	Map map(grid);
 
 //	// Paint the start position in blue (30cm of robot = 6 pixels)
 //	for (int i=470; i<476;i++) {
@@ -379,11 +210,10 @@ int main() {
 		sleep(0.2);
 	}
 
-	int t = 0;
-	t+=9;
-
 	return 0;
 }
+
+
 
 
 
