@@ -1,9 +1,8 @@
 #include <fstream>
 #include <string>
 #include <algorithm>
-#include <functional> 
+#include <functional>
 #include <cctype>
-#include "../headers/Robot.h"
 #include "../headers/Configuration.h"
 
 using namespace std;
@@ -27,8 +26,7 @@ static inline string &trim(string &s) {
 	return ltrim(rtrim(s));
 }
 
-Configuration::Configuration(const char* szFile)
-	: mConfigMap()
+Configuration::Configuration(const char* szFile) : mConfigMap()
 {
 	fstream fsConfig;
 	fsConfig.open(szFile, ios::in);
@@ -58,13 +56,13 @@ Configuration::Configuration(const char* szFile)
 
 string Configuration::ReadString(const char* szKey)
 {
-	return (this->mConfigMap[szKey]);
+	return this->mConfigMap[szKey];
 }
 
 int Configuration::ReadIntToken(const char* szKey, int nTokenNum)
 {
 	string strValue = this->mConfigMap[szKey];
-	
+
 	for (int i = 0; i < nTokenNum; i++)
 	{
 		int nIndex = strValue.find(" ");

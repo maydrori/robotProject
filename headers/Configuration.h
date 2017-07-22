@@ -1,5 +1,17 @@
-#ifndef __CONFIGURATION_H__
-#define __CONFIGURATION_H__
+/*
+ * Configuration.h
+ *
+ *  Created on: Jul 22, 2017
+ *      Author: user
+ */
+
+#ifndef HEADERS_CONFIGURATION_H_
+#define HEADERS_CONFIGURATION_H_
+
+#include <unordered_map>
+#include <string>
+
+using namespace std;
 
 typedef struct
 {
@@ -26,10 +38,14 @@ class Configuration
 		static Configuration* _instance;
 
 		Configuration(const char* szFile);
+		//unordered_map<string, string> nMap;
+		std::unordered_map<std::string, std::string> mConfigMap;
+
+		//std::unordered_map<std::string, std::string> nConfigMap;
 		StartLocation mStartLocation;
 		Goal mGoal;
 		RobotSize mRobotSize;
-		double mMapResolutionCM;		
+		double mMapResolutionCM;
 
 		std::string ReadString(const char* szKey);
 		int	ReadIntToken(const char* szKey, int nTokenNum);
@@ -67,4 +83,5 @@ class Configuration
 		}
 };
 
-#endif
+
+#endif /* HEADERS_CONFIGURATION_H_ */

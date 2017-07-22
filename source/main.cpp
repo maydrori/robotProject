@@ -1,13 +1,9 @@
 #include <HamsterAPIClientCPP/Hamster.h>
 #include <iostream>
-#include "Map.h"
-#include "PathPlanner.h"
+#include "../headers/Map.h"
+#include "../headers/PathPlanner.h"
 
-#if defined(WIN32) || defined(_WIN32) || defined(__WIN32) && !defined(__CYGWIN__)
-#define CONFIG_PATH "C:\\Users\\Meir-pc\\Desktop\\robotics\\params\\parameters.txt"
-#else
-#define CONFIG_PATH "/home/colman/Desktop/cyka/params/parameters.txt"
-#endif
+#define CONFIG_PATH "/home/user/workspace/ObstacleAvoid/params/parameters.txt"
 
 using namespace std;
 using namespace HamsterAPI;
@@ -15,7 +11,7 @@ HamsterAPI::Hamster * hamster;
 
 // Each pixel = 0.05meters
 // means: 1meter = 20pixels
-//double OPEN_CV_RESOLUTION = 0.05;
+double OPEN_CV_RESOLUTION = 0.05;
 
 void getScansBetween(double min, double max, std::vector<double> & distances) {
 	HamsterAPI::LidarScan scan = hamster->getLidarScan();
@@ -163,47 +159,32 @@ typedef vector<pair<int,int> > Path;
 
 int main() {
 
-	Configuration::Init(CONFIG_PATH);
-	Configuration* config = Configuration::Instance();
-
 	// Init the hamster
 	hamster = new Hamster(1);
 	sleep(3);
+
+	Configuration::Init(CONFIG_PATH);
 
 	OccupancyGrid grid = hamster->getSLAMMap();
 		
 	Map map(grid);
 
-//	// Paint the start position in blue (30cm of robot = 6 pixels)
-//	for (int i=470; i<476;i++) {
-//		for (int j=437; j<443; j++) {
-//			map.paintCell(i, j, 0,0,255);
-//		}
-//	}
+//	// Paint the start position in blue
+//	map.paintCell(470 , 437, 0,0,255);
 //
-//	// Paint the goal position in green (30cm of robot = 6 pixels)
-//	for (int i=475; i<481;i++) {
-//		for (int j=470; j<476; j++) {
-//			map.paintCell(i, j, 0,255,0);
-//		}
+//	// Paint the goal position in green
+//	map.paintCell(475 , 470, 0,255,0);
+//
+//	PathPlanner pln(blownGrid, 470, 437);
+//	Path path = pln.computeShortestPath(475, 470);
+//
+//	// Paint the path in red
+//	for (int i = 0; i < path.size(); ++i) {
+//
+//		map.paintCell(path[path.size() - 1 - i].first,
+//				   	  path[path.size() - 1 - i].second,
+//					  255,0,0);
 //	}
-
-	// Paint the start position in blue
-	map.paintCell(470 , 437, 0,0,255);
-
-	// Paint the goal position in green
-	map.paintCell(475 , 470, 0,255,0);
-
-	PathPlanner pln(blownGrid, 470, 437);
-	Path path = pln.computeShortestPath(475, 470);
-
-	// Paint the path in red
-	for (int i = 0; i < path.size(); ++i) {
-
-		map.paintCell(path[path.size() - 1 - i].first,
-				   	  path[path.size() - 1 - i].second,
-					  255,0,0);
-	}
 
 	while (hamster->isConnected()) {
 		map.show();

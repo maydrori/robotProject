@@ -5,7 +5,7 @@
  *      Author: user
  */
 
-#include "PathPlanner.h"
+#include "../headers/PathPlanner.h"
 
 PathPlanner::PathPlanner(OccupancyGrid& grid, int startRow, int startCol) :
 	grid(grid), startRow(startRow), startCol(startCol){

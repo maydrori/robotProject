@@ -5,23 +5,24 @@
  *      Author: user
  */
 
-#include "Map.h"
+#include "../headers/Map.h"
 
 Map::Map(OccupancyGrid &grid) :grid(grid) {
 	cv::namedWindow("OccupancyGrid-view");
 
 	config = Configuration::Instance();
 
-	robotHeightInPixels = config.getHeight() / grid.getResolution();
-	robotWidthInPixels = config.getWidth() / grid.getResolution();
+	robotSizeInPixels = config->robotSize().height / 100.0 / grid.getResolution();
 
-	convertToCoarseGrid();
-
+	//convertToCoarseGrid();
 	//initMat(*coarseGrid);
-	initMat(getBlownGrid(grid, config->robotSize().height, config->robotSize().width));
+
+	convertToBlownGrid();
+	initMat(*blownGrid);
 }
 
 void Map::initMat(OccupancyGrid &grid) {
+
 	mat = cv::Mat(grid.getHeight(), grid.getWidth(), CV_8UC3);
 
 	cout << "Grid size: " << grid.getHeight() << " * " << grid.getWidth() << endl;
@@ -59,6 +60,46 @@ void Map::show (){
 	cv::waitKey(1);
 }
 
+// The sizes in cm
+int Map::getNumOfPixelsToBlow(double mapResolution, int robotHeight, int robotWidth) {
+
+	// Size in m
+	double height = robotHeight / 100.0;
+	double width = robotWidth / 100.0;
+
+	double blowSize = max(height, width) / 2;
+
+	return blowSize / mapResolution;
+}
+
+void Map::convertToBlownGrid() {
+
+	int blowRadius = getNumOfPixelsToBlow(grid.getResolution(),
+			config->robotSize().height,
+			config->robotSize().width);
+
+	blownGrid = new OccupancyGrid(grid.getHeight(), grid.getWidth(), grid.getHeight());
+
+	for (int i = 0; i<grid.getHeight(); i++) {
+		for (int j = 0; j<grid.getWidth(); j++) {
+
+			if (grid.getCell(i, j) == CELL_OCCUPIED) {
+
+				blownGrid->setCell(i, j, CELL_OCCUPIED);
+
+				for (int i2 = i - blowRadius; i2 <= i + blowRadius; i2++) {
+					for (int j2 = j - blowRadius; j2 <= j + blowRadius; j2++) {
+
+						if (i2 >= 0 && i2 < grid.getHeight() && j2 >= 0 && j2 < grid.getWidth()) {
+							blownGrid->setCell(i2, j2, CELL_OCCUPIED);
+						}
+					}
+				}
+			}
+		}
+	}
+}
+
 void Map::convertToCoarseGrid() {
 
 	int rows = grid.getHeight() / robotSizeInPixels;
@@ -85,52 +126,14 @@ void Map::convertToCoarseGrid() {
 				}
 			}
 
-			if (isOccupied) courseGrid->setCell(i, j, CELL_OCCUPIED);
-			else courseGrid->setCell(i, j, CELL_FREE);
+			if (isOccupied) coarseGrid->setCell(i, j, CELL_OCCUPIED);
+			else coarseGrid->setCell(i, j, CELL_FREE);
 		}
 	}
-}
-
-// The sizes in cm
-int getNumOfPixelsToBlow(double mapResolution) {
-
-	// Size in m
-	double height = config.getHeight() / 100;
-	double width = config.getWidth() / 100;
-
-	double blowSize = max(height, width) / 2;
-
-	return blowSize / mapResolution;
-}
-
-OccupancyGrid getBlownGrid(OccupancyGrid grid) {
-
-	int blowRadius = getNumOfPixelsToBlow(grid.getResolution());
-
-	OccupancyGrid blownGrid = grid;
-
-	for (int i = 0; i<grid.getHeight(); i++) {
-		for (int j = 0; j<grid.getWidth(); j++) {
-
-			if (grid.getCell(i, j) == CELL_OCCUPIED) {
-
-				for (int i2 = i - blowRadius; i2 <= i + blowRadius; i2++) {
-					for (int j2 = j - blowRadius; j2 <= j + blowRadius; j2++) {
-
-						if (i2 >= 0 && i2 < grid.getHeight() && j2 >= 0 && j2 < grid.getWidth()) {
-							blownGrid.setCell(i2, j2, CELL_OCCUPIED);
-						}
-					}
-				}
-			}
-		}
-	}
-
-	return blownGrid;
 }
 
 Map::~Map() {
 	cv::destroyWindow("OccupancyGrid-view");
-	delete courseGrid;
+	delete coarseGrid;
 }
 
