@@ -130,7 +130,6 @@ Path PathPlanner::reconstructPath(Node* dest) {
 
 Path PathPlanner::computeShortestPath(int destRow, int destCol) {
 
-	try {
 	buildGraph();
 
 	// Initializing open list
@@ -154,7 +153,7 @@ Path PathPlanner::computeShortestPath(int destRow, int destCol) {
 	startNode->h = 0;
 	startNode->parent->row = startRow;
 	startNode->parent->col = startCol;
-	cout <<"finish 2 "  << destRow << "*" << destCol << endl;
+
 	// Getting destination node
 	Node* dest = mat[destRow][destCol];
 
@@ -162,7 +161,7 @@ Path PathPlanner::computeShortestPath(int destRow, int destCol) {
 
 	Path path;
 	bool destinationFound = false;
-cout << "begin" << endl;
+
 	while (!openList.empty()) {
 		Node *currNode = openList.top();
 		openList.pop();
@@ -188,7 +187,7 @@ cout << "begin" << endl;
 				// Setting parent
 				currSuccessor->parent = currNode;
 				destinationFound = true;
-				cout <<"finish a*" << endl;
+
 				return reconstructPath(dest);
 			}
 			// If the successor is already on the closed
@@ -217,10 +216,5 @@ cout << "begin" << endl;
 	if (!destinationFound) {
 		cout << "error during calculating path" << endl;
 		return path;
-	}
-
-	}
-	catch (int e) {
-		cout << "oops" << endl;
 	}
 }

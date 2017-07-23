@@ -19,6 +19,7 @@ class RobotManager
 		int mStartY;
 		int mGoalX;
 		int mGoalY;
+		Path getWaypoints(Path path);
 
 	public:
 		RobotManager(Map* map);

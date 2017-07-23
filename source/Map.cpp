@@ -78,14 +78,12 @@ void Map::convertToBlownGrid() {
 			config->robotSize().height,
 			config->robotSize().width);
 
-	blownGrid = new OccupancyGrid(grid.getHeight(), grid.getWidth(), grid.getHeight());
+	blownGrid = new OccupancyGrid(grid);
 
 	for (int i = 0; i<grid.getHeight(); i++) {
 		for (int j = 0; j<grid.getWidth(); j++) {
 
 			if (grid.getCell(i, j) == CELL_OCCUPIED) {
-
-				blownGrid->setCell(i, j, CELL_OCCUPIED);
 
 				for (int i2 = i - blowRadius; i2 <= i + blowRadius; i2++) {
 					for (int j2 = j - blowRadius; j2 <= j + blowRadius; j2++) {
