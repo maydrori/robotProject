@@ -17,7 +17,6 @@ private:
 	Configuration* config;
 	OccupancyGrid& grid;
 	OccupancyGrid* coarseGrid;
-	OccupancyGrid* blownGrid;
 	cv::Mat mat;
 	//int robotHeightInPixels;
 	//int robotWidthInPixels;
@@ -31,6 +30,7 @@ private:
 	int getNumOfPixelsToBlow(double mapResolution, int robotHeight, int robotWidth);
 public:
 	Map(OccupancyGrid &grid);
+	OccupancyGrid* blownGrid;
 	void show();
 	void paintCell(int i, int j, int pixelR, int pixelG, int pixelB);
 	void paintCell(int i, int j, int pixel);

@@ -2,6 +2,7 @@
 #include <iostream>
 #include "../headers/Map.h"
 #include "../headers/PathPlanner.h"
+#include "../headers/RobotManager.h"
 
 #define CONFIG_PATH "/home/user/workspace/ObstacleAvoid/params/parameters.txt"
 
@@ -163,31 +164,18 @@ int main() {
 	hamster = new Hamster(1);
 	sleep(3);
 
+	// Init the configuration
 	Configuration::Init(CONFIG_PATH);
 
+	// Create a map by the hamster's slam map
 	OccupancyGrid grid = hamster->getSLAMMap();
-		
-	Map map(grid);
+	Map* map = new Map(grid);
 
-//	// Paint the start position in blue
-//	map.paintCell(470 , 437, 0,0,255);
-//
-//	// Paint the goal position in green
-//	map.paintCell(475 , 470, 0,255,0);
-//
-//	PathPlanner pln(blownGrid, 470, 437);
-//	Path path = pln.computeShortestPath(475, 470);
-//
-//	// Paint the path in red
-//	for (int i = 0; i < path.size(); ++i) {
-//
-//		map.paintCell(path[path.size() - 1 - i].first,
-//				   	  path[path.size() - 1 - i].second,
-//					  255,0,0);
-//	}
+	RobotManager* manager = new RobotManager(map);
+	manager->Start();
 
 	while (hamster->isConnected()) {
-		map.show();
+		map->show();
 		sleep(0.2);
 	}
 
