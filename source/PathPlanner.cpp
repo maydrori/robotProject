@@ -119,10 +119,10 @@ Path PathPlanner::reconstructPath(Node* dest) {
 		currParent = currParent->parent;
 	}
 
-	// Printing
-	for (int i = 0; i < toRet.size(); ++i) {
-		cout << "(" << toRet[toRet.size() - 1 - i].first << ", " << toRet[toRet.size() - 1 - i].second << ") -> ";
-	}
+//	// Printing
+//	for (int i = 0; i < toRet.size(); ++i) {
+//		cout << "(" << toRet[toRet.size() - 1 - i].first << ", " << toRet[toRet.size() - 1 - i].second << ") -> ";
+//	}
 
 	cout << "destination";
 	return toRet;

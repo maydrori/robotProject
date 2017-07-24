@@ -40,6 +40,11 @@ void RobotManager::Start()
 
 	Path smoothPath = getWaypoints(path);
 
+	// Printing
+	for (int i = 0; i < smoothPath.size(); ++i) {
+		cout << "(" << smoothPath[smoothPath.size() - 1 - i].first << ", " << smoothPath[smoothPath.size() - 1 - i].second << ") -> ";
+	}
+
 	// Paint the path in blue
 	for (int i = 0; i < smoothPath.size(); ++i) {
 
@@ -48,10 +53,7 @@ void RobotManager::Start()
 					  0,0,255);
 	}
 
-//	// Printing
-//			for (int i = 0; i < smoothPath.size(); ++i) {
-//				cout << "(" << smoothPath[smoothPath.size() - 1 - i].first << ", " << smoothPath[smoothPath.size() - 1 - i].second << ") -> ";
-//			}
+
 }
 
 Path RobotManager::getWaypoints(Path path) {
@@ -65,6 +67,7 @@ Path RobotManager::getWaypoints(Path path) {
 	if (path.size() > 0)
 	{
 		pair<int,int> last = path[0];
+		int counter = 0;
 
 		for (int i = 1; i < path.size(); i++)
 		{
@@ -73,12 +76,15 @@ Path RobotManager::getWaypoints(Path path) {
 			int dyNew = path[i].second - last.second;
 
 			// If the deltas have changed, push the last into the vector
-			if (dx != dxNew || dy != dyNew)
+			if (dx != dxNew || dy != dyNew || counter >= 10)
 			{
+				counter = 0;
+
 				dx = dxNew;
 				dy = dyNew;
 				smooth.push_back(last);
 			}
+			else ++counter;
 
 			last = path[i];
 		}
