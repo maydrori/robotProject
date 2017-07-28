@@ -160,24 +160,36 @@ typedef vector<pair<int,int> > Path;
 
 int main() {
 
-	// Init the hamster
-	hamster = new Hamster(1);
-	sleep(3);
+	bool bConnectionSuccedd = false;
+
+	while (!bConnectionSuccedd) {
+		try {
+			// Init the hamster
+			hamster = new Hamster(1);
+			sleep(3);
+			bConnectionSuccedd = true;
+		}
+		catch(const HamsterAPI::HamsterError & message_error)
+		{
+			cout << "shit" << endl;
+			HamsterAPI::Log::i("Client", message_error.what());
+		}
+	}
 
 	// Init the configuration
-	Configuration::Init(CONFIG_PATH);
+	ConfigurationManager::Init(CONFIG_PATH);
 
 	// Create a map by the hamster's slam map
 	OccupancyGrid grid = hamster->getSLAMMap();
 	Map* map = new Map(grid);
 
-	RobotManager* manager = new RobotManager(map);
+	RobotManager* manager = new RobotManager(hamster, map);
 	manager->Start();
 
-	while (hamster->isConnected()) {
-		map->show();
-		sleep(0.2);
-	}
+//	while (hamster->isConnected()) {
+//		map->show();
+//		sleep(0.2);
+//	}
 
 	return 0;
 }

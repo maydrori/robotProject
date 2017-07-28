@@ -20,11 +20,11 @@ void WaypointManager::SetDestination(int nStartX, int nStartY, int nGoalX, int n
 	}
 
 	// Halt robot while we're computing stuff
-	this->mRobot->SetSpeed(0, 0);
+	this->mRobot->sendSpeed(0, 0);
 
 	// Perform A*
 //	vector<Node*> path = this->mGraph->CalculatePath(nStartX, nStartY, nGoalX, nGoalY);
-	PathPlanner pln(*(map->blownGrid), 470, 437);
+	PathPlanner pln(*(mMap->blownGrid), 470, 437);
 	Path path = getWaypoints(pln.computeShortestPath(472, 470));
 
 	this->mPaths.push(NULL);
@@ -32,10 +32,10 @@ void WaypointManager::SetDestination(int nStartX, int nStartY, int nGoalX, int n
 	// Move the elements into the stack
 	for (unsigned i = 0; i < path.size(); i++)
 	{
-		if (path[i] != NULL)
-		{
-			this->mPaths.push(path[i]);
-		}
+		Node* node = new Node();
+		node->row = path[i].first;
+		node->col = path[i].second;
+		this->mPaths.push(node);
 	}
 
 	this->NextTarget(false);
@@ -44,8 +44,8 @@ void WaypointManager::SetDestination(int nStartX, int nStartY, int nGoalX, int n
 Path WaypointManager::getWaypoints(Path path) {
 
 	// Smoothen the result and remove unnecessary waypoints
-	int dx = 0;
-	int dy = 0;
+	int dRow = 0;
+	int dCol = 0;
 	Path smooth;
 
 	// If we have a path, make it smooth
@@ -57,16 +57,16 @@ Path WaypointManager::getWaypoints(Path path) {
 		for (int i = 1; i < path.size(); i++)
 		{
 			// Calculate the new deltas
-			int dxNew = path[i].first - last.first;
-			int dyNew = path[i].second - last.second;
+			int dRowNew = path[i].first - last.first;
+			int dColNew = path[i].second - last.second;
 
 			// If the deltas have changed, push the last into the vector
-			if (dx != dxNew || dy != dyNew || counter >= 10)
+			if (dRow != dRowNew || dCol != dColNew || counter >= 10)
 			{
 				counter = 0;
 
-				dx = dxNew;
-				dy = dyNew;
+				dRow = dRowNew;
+				dCol = dColNew;
 				smooth.push_back(last);
 			}
 			else ++counter;
@@ -86,13 +86,13 @@ void WaypointManager::Update(Particle* best)
 	if (this->mCurrentTarget != NULL)
 	{
 		// Translate particle position to grid
-		double fMapToGrid = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
-		int nX = best->x() / fMapToGrid;
-		int nY = best->y() / fMapToGrid;
+//		double fMapToGrid = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
+//		int nX = best->x() / fMapToGrid;
+//		int nY = best->y() / fMapToGrid;
 
 		// Calculate deltas
-		int dx = abs(this->mCurrentTarget->x() - nX);
-		int dy = abs(this->mCurrentTarget->y() - nY);
+		int dRow = abs(this->mCurrentTarget->row - best->mY);
+		int dCol = abs(this->mCurrentTarget->col - best->mX);
 
 		int nAllowedRadius = ROBOT_REACHED_WAYPOINT_RADIUS;
 
@@ -103,7 +103,7 @@ void WaypointManager::Update(Particle* best)
 		}
 
 		// Check if robot reached target cell in grid
-		if (dx <= nAllowedRadius && dy <= nAllowedRadius)
+		if (dRow <= nAllowedRadius && dCol <= nAllowedRadius)
 		{
 			this->NextTarget(true);
 		}
@@ -139,10 +139,10 @@ void WaypointManager::NextTarget(bool bHappy)
 	}
 	else
 	{
-		double fResolution = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
-		int x = next->x() * fResolution;
-		int y = next->y() * fResolution;
-		this->SetBehaviour(new DriveToWaypoint(this->mRobot, x, y));
+//		double fResolution = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
+//		int x = next->x() * fResolution;
+//		int y = next->y() * fResolution;
+		this->SetBehaviour(new DriveToWaypoint(this->mRobot, next->col, next->row));
 	}
 
 	this->mCurrentTarget = next;

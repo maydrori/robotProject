@@ -5,14 +5,12 @@
 
 #include <stack>
 #include "Map.h"
-#include "Graph.h"
 #include "Node.h"
-#include "Robot.h"
 #include "Behaviour.h"
 #include "Dance.h"
 #include "DriveToWaypoint.h"
 #include "StandInPosition.h"
-#include "Configuration.h"
+#include "PathPlanner.h"
 
 class WaypointManager
 {

@@ -18,7 +18,7 @@ void DriveToWaypoint::Action(Particle* best)
 	if (this->IsFacingDirection(fAngleToWaypoint, best))
 	{
 		// TODO: Check speed with a real robot
-		this->mRobot->SetSpeed(MOVEMENT_SPEED, 0);
+		this->mRobot->sendSpeed(MOVEMENT_SPEED, 0);
 	}
 	else
 	{
@@ -40,7 +40,7 @@ void DriveToWaypoint::Action(Particle* best)
 		}
 
 		// TODO: Check speed with a real robot
-		this->mRobot->SetSpeed(fWalkSpeedWhileTurning, TURNING_SPEED * nTurnMultiplier);
+		this->mRobot->sendSpeed(fWalkSpeedWhileTurning, TURNING_SPEED * nTurnMultiplier);
 	}
 }
 

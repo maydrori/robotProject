@@ -15,7 +15,7 @@ using namespace std;
 
 class Map {
 private:
-	Configuration* config;
+	ConfigurationManager* config;
 	OccupancyGrid& grid;
 	OccupancyGrid* coarseGrid;
 	cv::Mat mat;

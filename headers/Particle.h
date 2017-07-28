@@ -14,12 +14,17 @@
 class Particle
 {
 	private:
+//		int mX;
+//		int mY;
+//		double mYaw;
+//		double mBelief;
+
+	public:
 		int mX;
 		int mY;
 		double mYaw;
 		double mBelief;
 
-	public:
 		double mes;
 		double mov;
 		double last;

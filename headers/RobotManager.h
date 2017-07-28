@@ -15,15 +15,16 @@
 class RobotManager
 {
 	private:
+		HamsterAPI::Hamster* robot;
 		Map* map;
 		int mStartX;
 		int mStartY;
 		int mGoalX;
 		int mGoalY;
-		WaypointManager* mWaypointManager;
 
 	public:
-		RobotManager(Map* map);
+		WaypointManager* mWaypointManager;
+		RobotManager(HamsterAPI::Hamster* robot, Map* map);
 		void Start();
 };
 

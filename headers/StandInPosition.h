@@ -6,11 +6,11 @@
 class StandInPosition : public Behaviour
 {
 	public:
-		StandInPosition(Robot* robot) : Behaviour(robot) { }
+		StandInPosition(HamsterAPI::Hamster* robot) : Behaviour(robot) { }
 
 		void Action(Particle* best)
 		{
-			this->mRobot->SetSpeed(0, 0);
+			this->mRobot->sendSpeed(0, 0);
 		}
 };
 

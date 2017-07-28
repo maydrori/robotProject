@@ -10,7 +10,7 @@
 Map::Map(OccupancyGrid &grid) :grid(grid) {
 	cv::namedWindow("OccupancyGrid-view");
 
-	config = Configuration::Instance();
+	config = ConfigurationManager::Instance();
 
 	robotSizeInPixels = config->robotSize().height / 100.0 / grid.getResolution();
 

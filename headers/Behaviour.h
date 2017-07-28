@@ -1,7 +1,6 @@
 #ifndef __BEHAVIOUR_H__
 #define __BEHAVIOUR_H__
 
-#include "Robot.h"
 #include "Particle.h"
 #include <HamsterAPIClientCPP/Hamster.h>
 

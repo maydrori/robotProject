@@ -8,7 +8,7 @@
 
 using namespace std;
 
-Configuration* Configuration::_instance = NULL;
+ConfigurationManager* ConfigurationManager::_instance = NULL;
 
 // trim from start
 static inline string &ltrim(string &s) {
@@ -27,7 +27,7 @@ static inline string &trim(string &s) {
 	return ltrim(rtrim(s));
 }
 
-Configuration::Configuration(const char* szFile) : mConfigMap()
+ConfigurationManager::ConfigurationManager(const char* szFile) : mConfigMap()
 {
 	fstream fsConfig;
 	fsConfig.open(szFile, ios::in);
@@ -55,12 +55,12 @@ Configuration::Configuration(const char* szFile) : mConfigMap()
 	this->mMapResolutionCM = this->ReadFloat("MapResolutionCM");
 }
 
-string Configuration::ReadString(const char* szKey)
+string ConfigurationManager::ReadString(const char* szKey)
 {
 	return this->mConfigMap[szKey];
 }
 
-int Configuration::ReadIntToken(const char* szKey, int nTokenNum)
+int ConfigurationManager::ReadIntToken(const char* szKey, int nTokenNum)
 {
 	string strValue = this->mConfigMap[szKey];
 
@@ -82,7 +82,7 @@ int Configuration::ReadIntToken(const char* szKey, int nTokenNum)
 	return (nResult);
 }
 
-float Configuration::ReadFloat(const char* szKey)
+float ConfigurationManager::ReadFloat(const char* szKey)
 {
 	string strValue = this->mConfigMap[szKey];
 

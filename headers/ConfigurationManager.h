@@ -32,16 +32,14 @@ typedef struct
 	int width;
 } RobotSize;
 
-class Configuration
+class ConfigurationManager
 {
 	private:
-		static Configuration* _instance;
+		static ConfigurationManager* _instance;
 
-		Configuration(const char* szFile);
-		//unordered_map<string, string> nMap;
+		ConfigurationManager(const char* szFile);
+
 		std::unordered_map<std::string, std::string> mConfigMap;
-
-		//std::unordered_map<std::string, std::string> nConfigMap;
 		StartLocation mStartLocation;
 		Goal mGoal;
 		RobotSize mRobotSize;
@@ -52,14 +50,14 @@ class Configuration
 		float ReadFloat(const char* szKey);
 
 	public:
-		static Configuration* Instance()
+		static ConfigurationManager* Instance()
 		{
 			return (_instance);
 		}
 
 		static void Init(const char* szFile)
 		{
-			_instance = new Configuration(szFile);
+			_instance = new ConfigurationManager(szFile);
 		}
 
 		StartLocation start()

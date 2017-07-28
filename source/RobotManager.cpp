@@ -7,16 +7,18 @@
 
 #include <iostream>
 #include "../headers/RobotManager.h"
+#include <HamsterAPIClientCPP/Hamster.h>
 
 using namespace std;
 
 RobotManager::RobotManager(HamsterAPI::Hamster* robot, Map* mMap)
 {
+	this->robot = robot;
 	this->map = mMap;
-	this->mStartX = Configuration::Instance()->start().x;
-	this->mStartY = Configuration::Instance()->start().y;
-	this->mGoalX = Configuration::Instance()->goal().x;
-	this->mGoalY = Configuration::Instance()->goal().y;
+	this->mStartX = ConfigurationManager::Instance()->start().x;
+	this->mStartY = ConfigurationManager::Instance()->start().y;
+	this->mGoalX = ConfigurationManager::Instance()->goal().x;
+	this->mGoalY = ConfigurationManager::Instance()->goal().y;
 	this->mWaypointManager = new WaypointManager(robot, map);
 }
 
@@ -60,17 +62,19 @@ void RobotManager::Start()
 	this->mWaypointManager->SetDestination(this->mStartX, this->mStartY, this->mGoalX, this->mGoalY);
 
 	// Start the execution of the robot
-	while (true)
+	while (robot->isConnected())
 	{
 		// Read values from the robot
 //		this->mRobot->Read();
 
 		// Update the particle manager and get the best particle
-		Particle* best = Particle(robot->getPose()->getX(), robot->getPose()->getY(), robot->getPose()->getAngle());
+		Particle* best = new Particle(robot->getPose().getX(), robot->getPose().getY(), robot->getPose().getHeading());
 //				this->mParticleManager->Update(this->mRobot, this->mMap);
 
 		// Update the waypoint manager
 		this->mWaypointManager->Update(best);
+
+		sleep(0.2);
 	}
 }
 

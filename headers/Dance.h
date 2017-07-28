@@ -10,7 +10,7 @@ class Dance : public Behaviour
 
 		void Action(Particle* best)
 		{
-			this->mRobot->SetSpeed(0, 5);
+			this->mRobot->sendSpeed(0, 5);
 		}
 };
 
