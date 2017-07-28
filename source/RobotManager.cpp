@@ -59,20 +59,44 @@ RobotManager::RobotManager(HamsterAPI::Hamster* robot, Map* mMap)
 
 void RobotManager::Start()
 {
+//	map->paintCell(this->map->blownGrid->getWidth() / 2 , this->map->blownGrid->getHeight() / 2, 255,0,0);
+	double res = this->map->blownGrid->getResolution();
+
+	// The + 200 is because the robot is in the middle of the
+	// map so we need to shift the coordinates
+	int x = robot->getPose().getX() / res + (this->map->blownGrid->getWidth() / 2);
+	int y = robot->getPose().getY() / res + (this->map->blownGrid->getHeight() / 2);
+
+//	this->mStartX = x;
+//	this->mStartY = y;
+
 	this->mWaypointManager->SetDestination(this->mStartX, this->mStartY, this->mGoalX, this->mGoalY);
+
+	//	Paint the start position in blue
+	map->paintCell(mStartY , mStartX, 0,0,255);
+
+	// Paint the goal position in green
+	map->paintCell(mGoalY , mGoalX, 0,255,0);
+
+	cout << "robot pose = " << x << "," << y << endl;
+	Particle* best = new Particle(x, y, robot->getPose().getHeading());
+
+	// Update the waypoint manager
+	this->mWaypointManager->Update(best);
 
 	// Start the execution of the robot
 	while (robot->isConnected())
 	{
-		// Read values from the robot
-//		this->mRobot->Read();
+		this->map->show();
 
-		// Update the particle manager and get the best particle
-		Particle* best = new Particle(robot->getPose().getX(), robot->getPose().getY(), robot->getPose().getHeading());
-//				this->mParticleManager->Update(this->mRobot, this->mMap);
-
-		// Update the waypoint manager
-		this->mWaypointManager->Update(best);
+//		// Read values from the robot
+////		this->mRobot->Read();
+//
+//		// Update the particle manager and get the best particle
+//		Particle* best = new Particle(robot->getPose().getX(), robot->getPose().getY(), robot->getPose().getHeading());
+//
+//		// Update the waypoint manager
+//		this->mWaypointManager->Update(best);
 
 		sleep(0.2);
 	}

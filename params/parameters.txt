@@ -1,4 +1,4 @@
-startLocation: 362 305 20
-goal: 169 138
+startLocation: 470 470 90
+goal: 500 450
 robotSize: 30 30
 MapResolutionCM: 2.5

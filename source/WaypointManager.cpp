@@ -24,8 +24,26 @@ void WaypointManager::SetDestination(int nStartX, int nStartY, int nGoalX, int n
 
 	// Perform A*
 //	vector<Node*> path = this->mGraph->CalculatePath(nStartX, nStartY, nGoalX, nGoalY);
-	PathPlanner pln(*(mMap->blownGrid), 470, 437);
-	Path path = getWaypoints(pln.computeShortestPath(472, 470));
+	PathPlanner pln(*(mMap->blownGrid), nStartY, nStartX);
+	Path allPath = pln.computeShortestPath(nGoalY, nGoalX);
+	Path path = getWaypoints(allPath);
+cout << "finish a* and way points = " << path.size() << endl;
+
+	// Paint the all path in red
+	for (int i = 0; i < allPath.size(); ++i) {
+
+		this->mMap->paintCell(allPath[allPath.size() - 1 - i].first,
+				allPath[allPath.size() - 1 - i].second,
+					  255,0,0);
+	}
+
+	// Paint the smooth points path in blue
+	for (int i = 0; i < path.size(); ++i) {
+
+		this->mMap->paintCell(path[path.size() - 1 - i].first,
+				path[path.size() - 1 - i].second,
+					  0,0,255);
+	}
 
 	this->mPaths.push(NULL);
 
@@ -93,6 +111,8 @@ void WaypointManager::Update(Particle* best)
 		// Calculate deltas
 		int dRow = abs(this->mCurrentTarget->row - best->mY);
 		int dCol = abs(this->mCurrentTarget->col - best->mX);
+		cout << "dRow=" << this->mCurrentTarget->row << "," << best->mY << endl;
+		cout << "dCOl=" << this->mCurrentTarget->col << "," << best->mX << endl;
 
 		int nAllowedRadius = ROBOT_REACHED_WAYPOINT_RADIUS;
 
@@ -109,11 +129,13 @@ void WaypointManager::Update(Particle* best)
 		}
 	}
 
+//	cout << "going to behave" << endl;
 	this->mBehaviour->Action(best);
 }
 
 void WaypointManager::NextTarget(bool bHappy)
 {
+	cout << "NextTarget" << endl;
 	Node* next = NULL;
 
 	// If there are places to be, we shall go to the next place
@@ -128,17 +150,20 @@ void WaypointManager::NextTarget(bool bHappy)
 	{
 		if (!bHappy)
 		{
+			cout << "StandInPosition" << endl;
 			// Stop the robot
 			this->SetBehaviour(new StandInPosition(this->mRobot));
 		}
 		else
 		{
+			cout << "Dance" << endl;
 			// The robot is happy
 			this->SetBehaviour(new Dance(this->mRobot));
 		}
 	}
 	else
 	{
+		cout << "DriveToWayPoint" << endl;
 //		double fResolution = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
 //		int x = next->x() * fResolution;
 //		int y = next->y() * fResolution;
