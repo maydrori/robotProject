@@ -5,8 +5,8 @@
  *      Author: user
  */
 
-#ifndef HEADERS_CONFIGURATION_H_
-#define HEADERS_CONFIGURATION_H_
+#ifndef HEADERS_CONFIGURATIONMANAGER_H_
+#define HEADERS_CONFIGURATIONMANAGER_H_
 
 #include <unordered_map>
 #include <string>
@@ -84,4 +84,4 @@ class Configuration
 };
 
 
-#endif /* HEADERS_CONFIGURATION_H_ */
+#endif /* HEADERS_CONFIGURATIONMANAGER_H_ */

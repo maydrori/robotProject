@@ -8,7 +8,8 @@
 #ifndef MAP_H_
 #define MAP_H_
 #include <HamsterAPIClientCPP/Hamster.h>
-#include "Configuration.h"
+
+#include "ConfigurationManager.h"
 using namespace HamsterAPI;
 using namespace std;
 

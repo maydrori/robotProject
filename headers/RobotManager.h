@@ -10,6 +10,7 @@
 
 #include "Map.h"
 #include "PathPlanner.h"
+#include "WaypointManager.h"
 
 class RobotManager
 {
@@ -19,7 +20,7 @@ class RobotManager
 		int mStartY;
 		int mGoalX;
 		int mGoalY;
-		Path getWaypoints(Path path);
+		WaypointManager* mWaypointManager;
 
 	public:
 		RobotManager(Map* map);

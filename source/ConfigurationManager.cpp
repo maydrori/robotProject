@@ -3,7 +3,8 @@
 #include <algorithm>
 #include <functional>
 #include <cctype>
-#include "../headers/Configuration.h"
+
+#include "../headers/ConfigurationManager.h"
 
 using namespace std;
 
