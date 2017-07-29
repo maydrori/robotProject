@@ -4,7 +4,14 @@
 #include "../headers/PathPlanner.h"
 #include "../headers/RobotManager.h"
 
+// Delete on May's computer
+#define GUY
+
+#ifdef GUY
+#define CONFIG_PATH "/home/user/Desktop/robotProject/params/parameters.txt"
+#else
 #define CONFIG_PATH "/home/user/workspace/ObstacleAvoid/params/parameters.txt"
+#endif
 
 using namespace std;
 using namespace HamsterAPI;

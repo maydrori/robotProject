@@ -50,7 +50,7 @@ void DriveToWaypoint::Action(Particle* best)
 double DriveToWaypoint::GetCheapestAngleToTurn(double fTowardsAngle, Particle* best)
 {
 	// Get the angles
-	double fRobotAngle = best->yaw();
+	double fRobotAngle = best->getYaw();
 
 	// Calculate turn cost for left turn and right turn
 	double fLeft = fTowardsAngle - fRobotAngle;
@@ -82,7 +82,7 @@ double DriveToWaypoint::GetCheapestAngleToTurn(double fTowardsAngle, Particle* b
 bool DriveToWaypoint::IsFacingDirection(double fAngle, Particle* best)
 {
 	// Check if robot's yaw is equal to (around) the calculated angle
-	if (abs(fAngle - best->yaw()) <= ANGLE_COMPARISON_ACCEPTABLE_NOISE)
+	if (abs(fAngle - best->getYaw()) <= ANGLE_COMPARISON_ACCEPTABLE_NOISE)
 	{
 		return (true);
 	}
@@ -95,8 +95,8 @@ bool DriveToWaypoint::IsFacingDirection(double fAngle, Particle* best)
 double DriveToWaypoint::GetAngleToWaypoint(Particle* best)
 {
 	// Calculate delta from waypoint to robot
-	int dy = best->y() - this->mDstY;
-	int dx = this->mDstX - best->x();
+	int dy = best->getY() - this->mDstY;
+	int dx = this->mDstX - best->getX();
 
 	// Calculate the angle between robot to waypoint
 	double fAngleToWaypoint = toDeg(atan2(dy, dx));

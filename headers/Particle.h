@@ -14,16 +14,18 @@
 class Particle
 {
 	private:
-//		int mX;
-//		int mY;
-//		double mYaw;
-//		double mBelief;
-
-	public:
 		int mX;
 		int mY;
 		double mYaw;
 		double mBelief;
+
+		bool NeighboursOccupied(OccupancyGrid* grid, int x, int y, int level);
+
+	public:
+//		int mX;
+//		int mY;
+//		double mYaw;
+//		double mBelief;
 
 		double mes;
 		double mov;
@@ -31,51 +33,51 @@ class Particle
 
 		Particle(int x, int y, double yaw);
 		virtual ~Particle();
-//		double ProbByMove(int dx, int dy, double dyaw);
-//		double ProbByMeasures(Robot* robot, Map* map);
-//		void Update(Robot* robot, Map* map);
-//		Particle* RandomCloseParticle(Map* map);
-//
-//		int DegToIndex(double deg, int angleRange, int laserCount)
-//		{
-//			// 0.36
-//			double anglesPerLaser = ((double)angleRange / laserCount);
-//
-//			// 120
-//			int anglesMidPoint = angleRange / 2;
-//
-//			// (deg + 120) / 0.36
-//			return (deg + anglesMidPoint) / anglesPerLaser;
-//		}
-//
-//		double IndexToDeg(int index, int angleRange, int laserCount)
-//		{
-//			// 0.36
-//			double anglesPerLaser = ((double)angleRange / laserCount);
-//
-//			// 120
-//			int anglesMidPoint = angleRange / 2;
-//
-//			// index * 0.36 - 120
-//			return index * anglesPerLaser - anglesMidPoint;
-//		}
-//
-//		double belief()
-//		{
-//			return (this->mBelief);
-//		}
+		double ProbByMove(int dx, int dy, double dyaw);
+		double ProbByScan(HamsterAPI::LidarScan scan, Map* map);
+		void Update(HamsterAPI::Hamster* robot, Map* map);
+		Particle* RandomCloseParticle(Map* map);
 
-		int x()
+		int DegToIndex(double deg, int angleRange, int laserCount)
+		{
+			// 0.36
+			double anglesPerLaser = ((double)angleRange / laserCount);
+
+			// 120
+			int anglesMidPoint = angleRange / 2;
+
+			// (deg + 120) / 0.36
+			return (deg + anglesMidPoint) / anglesPerLaser;
+		}
+
+		double IndexToDeg(int index, int angleRange, int laserCount)
+		{
+			// 0.36
+			double anglesPerLaser = ((double)angleRange / laserCount);
+
+			// 120
+			int anglesMidPoint = angleRange / 2;
+
+			// index * 0.36 - 120
+			return index * anglesPerLaser - anglesMidPoint;
+		}
+
+		double belief()
+		{
+			return (this->mBelief);
+		}
+
+		int getX()
 		{
 			return (this->mX);
 		}
 
-		int y()
+		int getY()
 		{
 			return (this->mY);
 		}
 
-		double yaw()
+		double getYaw()
 		{
 			return (this->mYaw);
 		}

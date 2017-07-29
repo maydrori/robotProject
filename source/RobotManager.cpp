@@ -67,6 +67,10 @@ void RobotManager::Start()
 	// Paint the goal position in green
 	map->paintCell(mGoalY , mGoalX, 0,255,0);
 
+
+	// TODO: Maybe add first iteration flag?
+	bool first = true;
+
 	// Start the execution of the robot
 	while (robot->isConnected())
 	{
@@ -77,8 +81,11 @@ void RobotManager::Start()
 
 		// Update the particle manager and get the best particle
 		// TODO: Remove this and call the next line. wait for particles impl
-		Particle* best = new Particle(this->mStartX, this->mStartY, robot->getPose().getHeading());
-//		Particle* best = this->mParticleManager->Update(this->mRobot, this->mMap);
+		Particle* best = new Particle(first ? this->mStartX :this->robot->getPose().getX(),
+									  first ? this->mStartY : this->robot->getPose().getY(),
+											  robot->getPose().getHeading());
+		first = false;
+		best->Update(this->robot, this->map);
 
 		// Update the waypoint manager
 		this->mWaypointManager->Update(best);

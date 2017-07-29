@@ -109,10 +109,10 @@ void WaypointManager::Update(Particle* best)
 //		int nY = best->y() / fMapToGrid;
 
 		// Calculate deltas
-		int dRow = abs(this->mCurrentTarget->row - best->mY);
-		int dCol = abs(this->mCurrentTarget->col - best->mX);
-		cout << "dRow=" << this->mCurrentTarget->row << "," << best->mY << endl;
-		cout << "dCOl=" << this->mCurrentTarget->col << "," << best->mX << endl;
+		int dRow = abs(this->mCurrentTarget->row - best->getY());
+		int dCol = abs(this->mCurrentTarget->col - best->getX());
+		cout << "dRow=" << this->mCurrentTarget->row << "," << best->getY() << endl;
+		cout << "dCOl=" << this->mCurrentTarget->col << "," << best->getX() << endl;
 
 		int nAllowedRadius = ROBOT_REACHED_WAYPOINT_RADIUS;
 
