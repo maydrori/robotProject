@@ -14,9 +14,11 @@ void DriveToWaypoint::Action(Particle* best)
 {
 	double fAngleToWaypoint = this->GetAngleToWaypoint(best);
 
+	cout << "fAngleToWaypoint=" << fAngleToWaypoint << endl;
 	// If the robot is facing towards the waypoint, drive straight
 	if (this->IsFacingDirection(fAngleToWaypoint, best))
 	{
+		cout << "drive straight" << endl;
 		// TODO: Check speed with a real robot
 		this->mRobot->sendSpeed(MOVEMENT_SPEED, 0);
 	}
@@ -24,6 +26,7 @@ void DriveToWaypoint::Action(Particle* best)
 	{
 		// Get the angle we need to turn to
 		double fCheapestAngle = this->GetCheapestAngleToTurn(fAngleToWaypoint, best);
+		cout << "fCheapestAngle=" << fCheapestAngle << endl;
 		double fAbsAngle = abs(fCheapestAngle);
 
 		// If the angle is positive, we need to turn left
