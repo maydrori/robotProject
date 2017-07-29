@@ -22,11 +22,6 @@ class Particle
 		bool NeighboursOccupied(OccupancyGrid* grid, int x, int y, int level);
 
 	public:
-//		int mX;
-//		int mY;
-//		double mYaw;
-//		double mBelief;
-
 		double mes;
 		double mov;
 		double last;

@@ -11,6 +11,7 @@
 #include "Map.h"
 #include "PathPlanner.h"
 #include "WaypointManager.h"
+#include "ParticleManager.h"
 
 class RobotManager
 {
@@ -24,6 +25,7 @@ class RobotManager
 
 	public:
 		WaypointManager* mWaypointManager;
+		ParticleManager* mParticleManager;
 		RobotManager(HamsterAPI::Hamster* robot, Map* map);
 		void Start();
 };

@@ -1,10 +1,9 @@
 #include "../headers/ParticleManager.h"
 #include <algorithm>
-
 ParticleManager::ParticleManager(Map* map)
 {
 	// Create a particle according to start position
-	Particle* start = new Particle(Configuration::Instance()->start().x, Configuration::Instance()->start().y, Configuration::Instance()->start().yaw);
+	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
 	this->mParticles.push(start);
 
 	// Create more like it
@@ -29,7 +28,7 @@ bool ParticleCompareBeliefs(Particle* a, Particle* b)
 	return (a->belief() > b->belief());
 }
 
-Particle* ParticleManager::Update(Robot* robot, Map* map)
+Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map)
 {
 	vector<Particle*> remaining;
 	Particle* best;
@@ -48,9 +47,9 @@ Particle* ParticleManager::Update(Robot* robot, Map* map)
 		// * outside of the map
 		// * on an occupied cell
 		if (current->belief() < PARTICLE_REMOVAL_THRESHOLD ||
-			current->y() < 0 || current->y() >= map->mapHeight() ||
-			current->x() < 0 || current->x() >= map->mapWidth() ||
-			map->map()[current->y()][current->x()] == OCCUPIED_CELL)
+			current->getY() < 0 || current->getY() >= map->blownGrid->getHeight() ||
+			current->getX() < 0 || current->getX() >= map->blownGrid->getWidth() ||
+			map->blownGrid->getCell(current->getY(), current->getX()) == CELL_OCCUPIED)
 		{
 			delete current;
 			continue;
@@ -109,10 +108,10 @@ void ParticleManager::CreateRandomParticle(Map* map)
 
 	do
 	{
-		nX = rand() % map->mapWidth();
-		nY = rand() % map->mapHeight();
+		nX = rand() % map->blownGrid->getWidth();
+		nY = rand() % map->blownGrid->getHeight();
 	}
-	while (map->map()[nY][nX] == OCCUPIED_CELL);
+	while (map->blownGrid->getCell(nY, nX) == CELL_OCCUPIED);
 
 	nYaw = (rand() % 3600) / 10;
 
