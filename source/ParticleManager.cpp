@@ -1,5 +1,6 @@
 #include "../headers/ParticleManager.h"
 #include <algorithm>
+
 ParticleManager::ParticleManager(Map* map)
 {
 	// Create a particle according to start position
@@ -11,6 +12,10 @@ ParticleManager::ParticleManager(Map* map)
 	{
 		this->mParticles.push(start->RandomCloseParticle(map));
 	}
+}
+
+ParticleManager::~ParticleManager() {
+
 }
 
 void ParticleManager::ResampleParticles(Map* map)
@@ -28,7 +33,7 @@ bool ParticleCompareBeliefs(Particle* a, Particle* b)
 	return (a->belief() > b->belief());
 }
 
-Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map)
+Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
 	vector<Particle*> remaining;
 	Particle* best;
@@ -40,7 +45,7 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map)
 		this->mParticles.pop();
 
 		// Update it
-		current->Update(robot, map);
+		current->Update(robot, map, deltaX, deltaY, deltaYaw);
 
 		// Check deletion conditions
 		// * removal threshold

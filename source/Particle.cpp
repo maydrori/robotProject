@@ -196,22 +196,18 @@ double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 //	return ((double)nCorrectReadings / nTotalReadings);
 }
 
-void Particle::Update(HamsterAPI::Hamster* robot, Map* map)
+void Particle::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
-	int dx = robot->getPose().getX();
-	int dy = robot->getPose().getY();
-	double dyaw = robot->getPose().getHeading();
-
-	this->mX += dx;
-	this->mY += dy;
-	this->mYaw += dyaw;
+	this->mX += deltaX;
+	this->mY += deltaY;
+	this->mYaw += deltaYaw;
 
 	if (this->mYaw < 0)
 	{
 		this->mYaw += 360;
 	}
 
-	double move = this->ProbByMove(dx, dy, dyaw);
+	double move = this->ProbByMove(deltaX, deltaY, deltaYaw);
 	double measures = this->ProbByScan(robot->getLidarScan(), map);
 	double last = this->mBelief;
 	mes = measures;

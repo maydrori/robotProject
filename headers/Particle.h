@@ -30,7 +30,7 @@ class Particle
 		virtual ~Particle();
 		double ProbByMove(int dx, int dy, double dyaw);
 		double ProbByScan(HamsterAPI::LidarScan scan, Map* map);
-		void Update(HamsterAPI::Hamster* robot, Map* map);
+		void Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw);
 		Particle* RandomCloseParticle(Map* map);
 
 		int DegToIndex(double deg, int angleRange, int laserCount)

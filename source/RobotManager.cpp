@@ -33,6 +33,11 @@ void RobotManager::Start()
 	// Paint the goal position in green
 	map->paintCell(mGoalY , mGoalX, 0,255,0);
 
+	// Setting initial deltaX and delta Y
+	int deltaX = 0;
+	int deltaY = 0;
+	int deltaYaw = 0;
+
 	// Start the execution of the robot
 	while (robot->isConnected())
 	{
@@ -42,7 +47,7 @@ void RobotManager::Start()
 ////		this->mRobot->Read();
 
 		// Update the particle manager and get the best particle
-		Particle* best = this->mParticleManager->Update(this->robot, this->map);
+		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
 
 //
 //		// TODO: Remove this and call the next line. wait for particles impl
@@ -53,7 +58,7 @@ void RobotManager::Start()
 //		best->Update(this->robot, this->map);
 
 		// Update the waypoint manager
-		this->mWaypointManager->Update(best);
+		this->mWaypointManager->Update(best, &deltaX, &deltaY, &deltaYaw);
 
 		sleep(0.2);
 	}
