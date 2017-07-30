@@ -4,6 +4,9 @@
 #include "../headers/PathPlanner.h"
 #include "../headers/RobotManager.h"
 
+// Debug mode
+#define DEBUG
+
 // Delete on May's computer
 #define GUY
 

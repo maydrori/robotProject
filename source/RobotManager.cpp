@@ -43,22 +43,17 @@ void RobotManager::Start()
 	{
 		this->map->show();
 
-//		// Read values from the robot
-////		this->mRobot->Read();
-
 		// Update the particle manager and get the best particle
 		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
 
-//
-//		// TODO: Remove this and call the next line. wait for particles impl
-//		Particle* best = new Particle(first ? this->mStartX :this->robot->getPose().getX(),
-//									  first ? this->mStartY : this->robot->getPose().getY(),
-//											  robot->getPose().getHeading());
-//		first = false;
-//		best->Update(this->robot, this->map);
+		cout << "delta X: " << deltaX << " delta Y: " << deltaY << endl;
 
-		// Update the waypoint manager
-		this->mWaypointManager->Update(best, &deltaX, &deltaY, &deltaYaw);
+		if (best)
+		{
+			cout << "I have best!! " << endl;
+			// Update the waypoint manager
+			this->mWaypointManager->Update(best, &deltaX, &deltaY, &deltaYaw);
+		}
 
 		sleep(0.2);
 	}

@@ -35,6 +35,7 @@ bool ParticleCompareBeliefs(Particle* a, Particle* b)
 
 Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
+	cout << "Starting to update paritcle" <<  endl;
 	vector<Particle*> remaining;
 	Particle* best;
 
@@ -74,6 +75,8 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 		return NULL;
 	}
 
+	cout << "Sorting" << endl;
+
 	// Sort the remaining particles vector by highest priority
 	std::sort(remaining.begin(), remaining.end(), ParticleCompareBeliefs);
 
@@ -83,8 +86,6 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 	// Loop through the remaining particles and add them to the particle stack
 	for (int i = 0; i < remaining.size() && this->mParticles.size() < MAX_PARTICLES; i++)
 	{
-		this->mParticles.push(remaining[i]);
-
 		// If the current particle is strongly believable, then it should give birth to more like it
 		if (remaining[i]->belief() >= PARTICLE_STRONG_SIGNAL_THRESHOLD)
 		{

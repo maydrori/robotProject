@@ -50,6 +50,7 @@ bool Particle::NeighboursOccupied(OccupancyGrid* grid, int x, int y, int level=1
 double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 {
 	double hits = 0;
+	double misses = 0.0;
 	int scanSize = scan.getScanSize();
 
 	for (int i = 0; i < scanSize; ++i)
@@ -63,17 +64,22 @@ double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 			int newX = this->mX + disatnce * cos(radian) / mapRes;
 			int newY = this->mY + disatnce * sin(radian) / mapRes;
 
+//			cout << "Map resolution: " << mapRes << endl;
+//			cout << "this->mYaw: " << this->mYaw << endl;
+//			cout << "this->mX: " << this->mX << endl;
+//			cout << "this->mY: " << this->mY << endl;
+//			cout << "newX: " << newX << endl;
+//			cout << "newY: " << newY << endl;
+
 			if (map->blownGrid->getCell(newX, newY) == HamsterAPI::CELL_OCCUPIED)
 			{
 				hits++;
-			}
-			else if (this->NeighboursOccupied(map->blownGrid, newX, newY)) {
-				hits += 0.6;
+			} else {
+				misses++;
 			}
 		}
 	}
-
-	return (hits / 360);
+	return ((double) hits/ (hits+ misses));
 //	int nCorrectReadings = 0;
 //	int nTotalReadings = 0;
 //	LidarScan scan = robot->getLidarScan();
@@ -207,14 +213,22 @@ void Particle::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int delt
 		this->mYaw += 360;
 	}
 
-	double move = this->ProbByMove(deltaX, deltaY, deltaYaw);
+	//double move = this->ProbByMove(deltaX, deltaY, deltaYaw);
 	double measures = this->ProbByScan(robot->getLidarScan(), map);
 	double last = this->mBelief;
 	mes = measures;
-	mov = move;
+	//mov = move;
 	this->last = last;
+	this->mBelief = measures * last * NORMALIZATION_FACTOR;
 
-	this->mBelief = move * measures * last * NORMALIZATION_FACTOR;
+	if (this->mBelief > 0)
+	{
+//		cout << "Move: " << move << endl;
+//		cout << "Measures: " << measures << endl;
+//		cout << "Last: " << last << endl;
+//		cout << "Normaliztion Factor: " << NORMALIZATION_FACTOR << endl;
+		cout << "Belief: " << this->mBelief << endl;
+	}
 
 	if (this->mBelief > 1)
 	{
@@ -245,7 +259,6 @@ Particle* Particle::RandomCloseParticle(Map* map)
 	while (nX >= 0 && nY >= 0 && nX < map->blownGrid->getWidth() && nY < map->blownGrid->getHeight() && map->blownGrid->getCell(nX, nY) == HamsterAPI::CELL_OCCUPIED);
 
 	Particle* random = new Particle(nX, nY, nYaw);
-	random->mBelief = this->mBelief;
-
+	random->mBelief = this->mBelief;\
 	return (random);
 }
