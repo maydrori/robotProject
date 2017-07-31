@@ -35,28 +35,18 @@ double Particle::ProbByMove(int dx, int dy, double dyaw)
 	}
 }
 
-bool Particle::NeighboursOccupied(OccupancyGrid* grid, int x, int y, int level=1)
-{
-	return (grid->getCell(x+level, y) == HamsterAPI::CELL_OCCUPIED)||
-			(grid->getCell(x, y+level) == HamsterAPI::CELL_OCCUPIED)||
-			(grid->getCell(x+level, y+level) == HamsterAPI::CELL_OCCUPIED)||
-			(grid->getCell(x-level, y-level) == HamsterAPI::CELL_OCCUPIED)||
-			(grid->getCell(x, y-level) == HamsterAPI::CELL_OCCUPIED)||
-			(grid->getCell(x-level, y) == HamsterAPI::CELL_OCCUPIED)||
-			(grid->getCell(x+level, y-level) == HamsterAPI::CELL_OCCUPIED)||
-			(grid->getCell(x-level, y+level) == HamsterAPI::CELL_OCCUPIED);
-}
-
 double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 {
-	double hits = 0;
+
+	double hits = 0.0;
 	double misses = 0.0;
 	int scanSize = scan.getScanSize();
-
+	double total = 0.0;
 	for (int i = 0; i < scanSize; ++i)
 	{
 		int disatnce = scan.getDistance(i);
 		int maxRange = scan.getMaxRange();
+
 		if (disatnce < maxRange - 0.001)
 		{
 			double mapRes = ConfigurationManager::Instance()->mapResolution();
@@ -64,26 +54,23 @@ double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 			int newX = this->mX + disatnce * cos(radian) / mapRes;
 			int newY = this->mY + disatnce * sin(radian) / mapRes;
 
-//			cout << "Map resolution: " << mapRes << endl;
-//			cout << "this->mYaw: " << this->mYaw << endl;
-//			cout << "this->mX: " << this->mX << endl;
-//			cout << "this->mY: " << this->mY << endl;
-//			cout << "newX: " << newX << endl;
-//			cout << "newY: " << newY << endl;
-
-			if (map->getCell(newX, newY) == HamsterAPI::CELL_OCCUPIED)
+			if (newX >= 0 && newY >= 0 && newX <= map->getWidth() && newY <= map->getHeight()
+					&& map->getCell(newY, newX) == HamsterAPI::CELL_OCCUPIED)
 			{
 				hits++;
 			} else {
 				misses++;
 			}
+
+			total++;
 		}
 	}
-	return ((double) hits/ (hits+ misses));
+	return ((double) hits/ (total));
 }
 
-void Particle::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
+void Particle::Update(HamsterAPI::LidarScan scan, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
+	// lets say it doesnt cross borders
 	this->mX += deltaX;
 	this->mY += deltaY;
 	this->mYaw += deltaYaw;
@@ -94,21 +81,11 @@ void Particle::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int delt
 	}
 
 	//double move = this->ProbByMove(deltaX, deltaY, deltaYaw);
-	double measures = this->ProbByScan(robot->getLidarScan(), map);
-	double last = this->mBelief;
+	double measures = this->ProbByScan(scan, map);
 	mes = measures;
 	//mov = move;
 	this->last = last;
-	this->mBelief = measures * last * NORMALIZATION_FACTOR;
-
-	if (this->mBelief > 0)
-	{
-//		cout << "Move: " << move << endl;
-//		cout << "Measures: " << measures << endl;
-//		cout << "Last: " << last << endl;
-//		cout << "Normaliztion Factor: " << NORMALIZATION_FACTOR << endl;
-//		cout << "Belief: " << this->mBelief << endl;
-	}
+	this->mBelief = measures;
 
 	if (this->mBelief > 1)
 	{
@@ -143,14 +120,15 @@ Particle* Particle::RandomCloseParticle(Map* map)
 		nX = this->mX + (rnd1 % (radius * 2)) - radius;
 		nY = this->mY + (rnd2 % (radius * 2)) - radius;
 
-		// If there were NUM_OF_RADIUS_TRIES tries withous success we increase the radius
-		if (tryCounter % NUM_OF_RADIUS_TRIES == 0) {
-			radius++;
-		}
+//		// If there were NUM_OF_RADIUS_TRIES tries withous success we increase the radius
+//		if (tryCounter % NUM_OF_RADIUS_TRIES == 0 ) {
+//			radius++;
+//		}
 	}
-	while (nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight() && map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED);
+	while ((!((nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight())))||
+			(nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight() && map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED));
 
 	Particle* random = new Particle(nX, nY, nYaw);
-	random->mBelief = this->mBelief;\
+	random->mBelief = this->mBelief;
 	return (random);
 }

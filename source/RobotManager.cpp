@@ -40,6 +40,7 @@ void RobotManager::Start()
 
 	int currX = this->mStartX;
 	int currY = this->mStartY;
+	int currYaw = 0;
 
 	// Start the execution of the robot
 	while (robot->isConnected())
@@ -52,12 +53,14 @@ void RobotManager::Start()
 		if (best)
 		{
 			map->paintCell(best->getX(), best->getY(), 0, 180, 0);
-			deltaX = abs(best->mX - currX);
-			deltaY = abs(best->mY - currY);
+			deltaX = best->mX - currX;
+			deltaY = best->mY - currY;
+			deltaYaw = best->getYaw() - currYaw;
 
 			currX = best->mX;
 			currY = best->mY;
-//			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY;
+			currYaw = best->getYaw();
+			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY;
 //			cout << "currX=" << currX << ", currY=" << currY << endl;
 
 //			cout << "I have best!! " << endl;
