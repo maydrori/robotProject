@@ -11,6 +11,7 @@
 #include <HamsterAPIClientCPP/Hamster.h>
 #include <queue>
 #include "Node.h"
+#include "Map.h"
 
 using namespace HamsterAPI;
 using namespace std;
@@ -19,7 +20,7 @@ typedef vector<pair<int,int> > Path;
 
 class PathPlanner {
 private:
-	OccupancyGrid& grid;
+	Map& map;
 	int startRow, startCol;
 	vector<vector<Node*> > mat;
 
@@ -30,7 +31,7 @@ private:
 	Path reconstructPath(Node* dest);
 
 public:
-	PathPlanner(OccupancyGrid& grid, int startRow, int startCol);
+	PathPlanner(Map& map, int startRow, int startCol);
 	Path computeShortestPath(int destRow, int destCol);
 	virtual ~PathPlanner();
 };
