@@ -6,7 +6,6 @@ WaypointManager::WaypointManager(HamsterAPI::Hamster* robot, Map* map)
 {
 	this->mRobot = robot;
 	this->mMap = map;
-//	this->mGraph = graph;
 	this->mCurrentTarget = NULL;
 	this->mBehaviour = new StandInPosition(robot);
 }
@@ -111,21 +110,20 @@ void WaypointManager::Update(Particle* best, int* deltaX, int* deltaY, int* delt
 		// Calculate deltas
 		int dRow = abs(this->mCurrentTarget->row - best->getY());
 		int dCol = abs(this->mCurrentTarget->col - best->getX());
-
+//cout << "this->mCurrentTarget->row=" << this->mCurrentTarget->row << ", best->getY()=" << best->getY() << endl;
+//cout << "this->mCurrentTarget->col=" << this->mCurrentTarget->col << ", best->getX()=" << best->getX() << endl;
 		// Out params
-		*deltaX = dCol;
-		*deltaY = dRow;
+//		*deltaX = dCol;
+//		*deltaY = dRow;
 		// TODO: How to get angle delta?
 		*deltaYaw = 0;
-
-		cout << "dRow=" << this->mCurrentTarget->row << "," << best->getY() << endl;
-		cout << "dCOl=" << this->mCurrentTarget->col << "," << best->getX() << endl;
 
 		int nAllowedRadius = ROBOT_REACHED_WAYPOINT_RADIUS;
 
 		// If the current waypoint is the last waypoint, the robot must go to it exactly
 		if (this->mPaths.size() == 0 || this->mPaths.top() == NULL)
 		{
+			cout << "last?" << endl;
 			nAllowedRadius = 0;
 		}
 
@@ -142,12 +140,12 @@ void WaypointManager::Update(Particle* best, int* deltaX, int* deltaY, int* delt
 
 void WaypointManager::NextTarget(bool bHappy)
 {
-	cout << "NextTarget" << endl;
 	Node* next = NULL;
 
 	// If there are places to be, we shall go to the next place
 	if (!this->mPaths.empty())
 	{
+		cout << "get next way point" << endl;
 		next = this->mPaths.top();
 		this->mPaths.pop();
 	}
@@ -170,7 +168,7 @@ void WaypointManager::NextTarget(bool bHappy)
 	}
 	else
 	{
-		cout << "DriveToWayPoint" << endl;
+//		cout << "DriveToWayPoint" << endl;
 //		double fResolution = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
 //		int x = next->x() * fResolution;
 //		int y = next->y() * fResolution;

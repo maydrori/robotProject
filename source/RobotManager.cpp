@@ -38,24 +38,33 @@ void RobotManager::Start()
 	int deltaY = 0;
 	int deltaYaw = 0;
 
+	int currX = this->mStartX;
+	int currY = this->mStartY;
+
 	// Start the execution of the robot
 	while (robot->isConnected())
 	{
-		this->map->show();
+//		this->map->show();
 
 		// Update the particle manager and get the best particle
 		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
 
-		cout << "delta X: " << deltaX << " delta Y: " << deltaY << endl;
-
 		if (best)
 		{
-			cout << "I have best!! " << endl;
+			deltaX = abs(best->mX - currX);
+			deltaY = abs(best->mY - currY);
+
+			currX = best->mX;
+			currY = best->mY;
+			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY;
+			cout << "currX=" << currX << ", currY=" << currY << endl;
+
+//			cout << "I have best!! " << endl;
 			// Update the waypoint manager
 			this->mWaypointManager->Update(best, &deltaX, &deltaY, &deltaYaw);
 		}
 
-		sleep(0.2);
+		sleep(0.5);
 	}
 }
 
