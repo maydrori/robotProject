@@ -130,11 +130,23 @@ Particle* Particle::RandomCloseParticle(Map* map)
 	double nYaw = this->mYaw + (((rand() % (PARTICLE_CREATE_YAW_RANGE * 2)) - PARTICLE_CREATE_YAW_RANGE) / (double)10);
 
 	// Generate a random particle around the current particle (within PARTICLE_CREATE_IN_RADIUS)
+	int radius = PARTICLE_CREATE_IN_RADIUS;
+	if (radius < 2) radius = 2;
+	int tryCounter = 0;
 	do
 	{
+		tryCounter++;
+
+		int rnd1 = rand();
+		int rnd2 = rand();
 		// Generate (x,y) in range (-PARTICLE_CREATE_IN_RADIUS, +PARTICLE_CREATE_IN_RADIUS)
-		nX = this->mX + (rand() % (PARTICLE_CREATE_IN_RADIUS * 2)) - PARTICLE_CREATE_IN_RADIUS;
-		nY = this->mY + (rand() % (PARTICLE_CREATE_IN_RADIUS * 2)) - PARTICLE_CREATE_IN_RADIUS;
+		nX = this->mX + (rnd1 % (radius * 2)) - radius;
+		nY = this->mY + (rnd2 % (radius * 2)) - radius;
+
+		// If there were NUM_OF_RADIUS_TRIES tries withous success we increase the radius
+		if (tryCounter % NUM_OF_RADIUS_TRIES == 0) {
+			radius++;
+		}
 	}
 	while (nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight() && map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED);
 
