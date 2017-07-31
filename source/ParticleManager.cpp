@@ -35,7 +35,7 @@ bool ParticleCompareBeliefs(Particle* a, Particle* b)
 
 Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
-	cout << "Starting to update paritcle" <<  endl;
+//	cout << "Starting to update paritcle" <<  endl;
 	vector<Particle*> remaining;
 	Particle* best;
 
@@ -70,12 +70,12 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 	if (remaining.size() == 0)
 	{
 		// TODO: Decide how to handle this shit
-		cout << "Resampling!";
+//		cout << "Resampling!";
 		this->ResampleParticles(map);
 		return NULL;
 	}
 
-	cout << "Sorting" << endl;
+//	cout << "Sorting" << endl;
 
 	// Sort the remaining particles vector by highest priority
 	std::sort(remaining.begin(), remaining.end(), ParticleCompareBeliefs);

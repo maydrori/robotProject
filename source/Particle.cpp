@@ -80,126 +80,6 @@ double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 		}
 	}
 	return ((double) hits/ (hits+ misses));
-//	int nCorrectReadings = 0;
-//	int nTotalReadings = 0;
-//	LidarScan scan = robot->getLidarScan();
-//	double fMapResolution = ConfigurationManager::Instance()->mapResolution();
-//	int fMaxLaserDistPx = floor(robot->maxLaserRange() * 100 / fMapResolution);
-//	int nMapWidth = map->mapWidth();
-//	int nMapHeight = map->mapHeight();
-//
-//	// Loop through all the angles
-//	for (int i = scan.getMinScanAngle(); i <= scan.getMaxScanAngle(); i++)
-//	{
-//		// Get the index of the laser reading in the current angle
-//		int nCurrReadingIdx = this->DegToIndex(i, 240, nLaserCount);
-//
-//		// Get the reading from the laser
-//		double fLaserReading = robot->laser(nCurrReadingIdx);
-//
-//		// Get the actual angle on the map in the direction of the laser
-//		// TODO: Check if yaw is radian or degree
-//		double fPointDirection = this->mYaw + i;
-//
-//		// Get the X and Y modifiers to test the map
-//		double fModX = +cos(toRad(fPointDirection));
-//		double fModY = -sin(toRad(fPointDirection));
-//
-//		/*
-//		cout << "Reading in angle: " << i << endl
-//			 << "Reading from index: " << nCurrReadingIdx << endl
-//			 << "Laser reading: " << fLaserReading << endl
-//			 << "Laser reading in pixels: " << fLaserReadingPx << endl
-//			 << "Direction of the reading (deg angle): " << fPointDirection << endl
-//			 << "X/Y mods: (" << fModX << ", " << fModY << ")" << endl;
-//		 */
-//
-//		bool bFoundObstacle = false;
-//		int nObstacleX;
-//		int nObstacleY;
-//
-//		// Loop until we find an obstacle in the direction of the laser
-//		for (int nParticleDist = 1; nParticleDist < fMaxLaserDistPx && !bFoundObstacle; nParticleDist++)
-//		{
-//			// Calculate X and Y for the cell
-//			int nCurrX = this->mX + nParticleDist * fModX;
-//			int nCurrY = this->mY + nParticleDist * fModY;
-//
-//			// Map boundary checks ahead
-//			// If we hit a map boundary, then we consider it as an obstacle at the boundary point
-//
-//			// Check X boundaries
-//			if (nCurrX < 0)
-//			{
-//				nCurrX = 0;
-//				bFoundObstacle = true;
-//			}
-//			else if (nCurrX >= nMapWidth)
-//			{
-//				nCurrX = nMapWidth - 1;
-//				bFoundObstacle = true;
-//			}
-//
-//			// Check Y boundaries
-//			if (nCurrY < 0)
-//			{
-//				nCurrY = 0;
-//				bFoundObstacle = true;
-//			}
-//			else if (nCurrY >= nMapHeight)
-//			{
-//				nCurrY = nMapHeight - 1;
-//				bFoundObstacle = true;
-//			}
-//
-//			// Check if the cell is occupied
-//			if (map->map()[nCurrY][nCurrX] == OCCUPIED_CELL)
-//			{
-//				bFoundObstacle = true;
-//			}
-//
-//			// Check if we found an obstacle (either OCCUPIED_CELL hit or boundary hit)
-//			if (bFoundObstacle)
-//			{
-//				nObstacleX = nCurrX;
-//				nObstacleY = nCurrY;
-//			}
-//		}
-//
-//		double fDistToObstacle;
-//
-//		// If an obstacle was found, then calculate the distance to it.
-//		// If an obstacle was not found, use the maximum laser distance
-//		if (bFoundObstacle)
-//		{
-//			fDistToObstacle = sqrt(pow(this->mX - nObstacleX, 2) + pow(this->mY - nObstacleY, 2));
-//			/*
-//			cout << "Found obstacle at " << nObstacleX << " , " << nObstacleY << endl;
-//			cout << "Dist: " << fDistToObstacle << endl
-//				 << "Dist in meters: " << fDistToObstacle * fMapResolution / 100 << endl;
-//			 */
-//		}
-//		else
-//		{
-//			fDistToObstacle = fMaxLaserDistPx;
-//		}
-//
-//		// Convert pixels distance to meters
-//		fDistToObstacle = fDistToObstacle / 100 * fMapResolution;
-//
-//		// Calculate delta between laser reading and calculated distance from obstacle
-//		double fDelta = abs(fDistToObstacle - fLaserReading);
-//
-//		// If the delta is lower than or equal to our defined acceptable noise, we can mark this reading as correct
-//		if (fDelta <= PARTICLE_LASER_COMPARE_NOISE)
-//		{
-//			nCorrectReadings++;
-//		}
-//
-//		nTotalReadings++;
-//	}
-//
-//	return ((double)nCorrectReadings / nTotalReadings);
 }
 
 void Particle::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
@@ -227,7 +107,7 @@ void Particle::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int delt
 //		cout << "Measures: " << measures << endl;
 //		cout << "Last: " << last << endl;
 //		cout << "Normaliztion Factor: " << NORMALIZATION_FACTOR << endl;
-		cout << "Belief: " << this->mBelief << endl;
+//		cout << "Belief: " << this->mBelief << endl;
 	}
 
 	if (this->mBelief > 1)
@@ -256,7 +136,7 @@ Particle* Particle::RandomCloseParticle(Map* map)
 		nX = this->mX + (rand() % (PARTICLE_CREATE_IN_RADIUS * 2)) - PARTICLE_CREATE_IN_RADIUS;
 		nY = this->mY + (rand() % (PARTICLE_CREATE_IN_RADIUS * 2)) - PARTICLE_CREATE_IN_RADIUS;
 	}
-	while (nX >= 0 && nY >= 0 && nX < map->blownGrid->getWidth() && nY < map->blownGrid->getHeight() && map->blownGrid->getCell(nX, nY) == HamsterAPI::CELL_OCCUPIED);
+	while (nX >= 0 && nY >= 0 && nX < map->blownGrid->getWidth() && nY < map->blownGrid->getHeight() && map->blownGrid->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED);
 
 	Particle* random = new Particle(nX, nY, nYaw);
 	random->mBelief = this->mBelief;\

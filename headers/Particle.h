@@ -3,7 +3,7 @@
 
 #include "Map.h"
 
-#define PARTICLE_CREATE_IN_RADIUS 	 10
+#define PARTICLE_CREATE_IN_RADIUS 	 3
 #define PARTICLE_CREATE_YAW_RANGE	 30 // = 5.0
 #define toRad(a) 					 (((a) / 180) * M_PI)
 #define toDeg(a) 					 (((a) / M_PI) * 180)
@@ -14,14 +14,14 @@
 class Particle
 {
 	private:
-		int mX;
-		int mY;
 		double mYaw;
 		double mBelief;
 
 		bool NeighboursOccupied(OccupancyGrid* grid, int x, int y, int level);
 
 	public:
+		int mX;
+		int mY;
 		double mes;
 		double mov;
 		double last;
