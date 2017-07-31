@@ -5,7 +5,7 @@
 #include "../headers/RobotManager.h"
 
 // Delete on May's computer
-#define GUY
+#define May
 
 #ifdef GUY
 #define CONFIG_PATH "/home/user/Desktop/robotProject/params/parameters.txt"
@@ -198,11 +198,12 @@ int main() {
 		delete hamster;
 
 		cout << "shit2" << endl;
-		HamsterAPI::Log::i("Client", message_error.what());
 	}
 	}
 	return 0;
 }
+
+
 
 
 

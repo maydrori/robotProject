@@ -6,6 +6,8 @@
  */
 
 #include "../headers/Map.h"
+#include "opencv2/highgui/highgui.hpp"
+#include "opencv2/imgproc/imgproc.hpp"
 
 Map::Map(OccupancyGrid &grid) :grid(grid) {
 	cv::namedWindow("OccupancyGrid-view");
@@ -13,9 +15,6 @@ Map::Map(OccupancyGrid &grid) :grid(grid) {
 	config = ConfigurationManager::Instance();
 
 	robotSizeInPixels = config->robotSize().height / 100.0 / grid.getResolution();
-
-	//convertToCoarseGrid();
-	//initMat(*coarseGrid);
 
 	convertToBlownGrid();
 	initMat(*blownGrid);
@@ -31,6 +30,22 @@ void Map::initMat(OccupancyGrid &grid) {
 			initCell(grid,i,j);
 		}
 	}
+
+	mat = rotateMat();
+}
+
+Mat Map::rotateMat() {
+
+	cv::Mat warp_dst = cv::Mat::zeros( mat.rows, mat.cols, mat.type() );
+
+	Point2f center = Point2f( mat.cols/2, mat.rows/2 );
+	double angle = -30.0;
+	double scale = 1.0;
+
+	Mat rot_mat = cv::getRotationMatrix2D(center, angle, scale);
+	cv::warpAffine(mat, warp_dst, rot_mat, warp_dst.size());
+
+	return warp_dst;
 }
 
 void Map::initCell (OccupancyGrid &grid, int i, int j) {

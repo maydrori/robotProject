@@ -12,6 +12,7 @@
 #include "ConfigurationManager.h"
 using namespace HamsterAPI;
 using namespace std;
+using namespace cv;
 
 class Map {
 private:
@@ -24,6 +25,7 @@ private:
 	int robotSizeInPixels;
 
 	void initMat(OccupancyGrid &grid);
+	Mat rotateMat();
 	void initCell(OccupancyGrid &grid, int i, int j);
 	//OccupancyGrid getBlownGrid(OccupancyGrid grid, int robotHeight, int robotWidth);
 	void convertToBlownGrid();

@@ -42,7 +42,7 @@ void RobotManager::Start()
 ////		this->mRobot->Read();
 
 		// Update the particle manager and get the best particle
-		Particle* best = this->mParticleManager->Update(this->robot, this->map);
+//		Particle* best = this->mParticleManager->Update(this->robot, this->map);
 
 //
 //		// TODO: Remove this and call the next line. wait for particles impl
@@ -53,7 +53,7 @@ void RobotManager::Start()
 //		best->Update(this->robot, this->map);
 
 		// Update the waypoint manager
-		this->mWaypointManager->Update(best);
+//		this->mWaypointManager->Update(best);
 
 		sleep(0.2);
 	}

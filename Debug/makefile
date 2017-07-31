@@ -44,7 +44,7 @@ all: ObstacleAvoid
 ObstacleAvoid: $(OBJS) $(USER_OBJS)
 	@echo 'Building target: $@'
 	@echo 'Invoking: Cross G++ Linker'
-	g++  -o "ObstacleAvoid" $(OBJS) $(USER_OBJS) $(LIBS)
+	g++ -L/usr/local/lib -o "ObstacleAvoid" $(OBJS) $(USER_OBJS) $(LIBS)
 	@echo 'Finished building target: $@'
 	@echo ' '
 

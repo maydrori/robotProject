@@ -4,5 +4,5 @@
 
 USER_OBJS :=
 
-LIBS := -lHamsterAPICommon -lopencv_core -lopencv_highgui -lCogniAlgCPP -lHamsterAPIClientCPP
+LIBS := -lHamsterAPICommon -lopencv_imgproc -lopencv_core -lopencv_highgui -lCogniAlgCPP -lHamsterAPIClientCPP
 
