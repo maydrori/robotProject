@@ -9,15 +9,19 @@
 #include "opencv2/highgui/highgui.hpp"
 #include "opencv2/imgproc/imgproc.hpp"
 
-Map::Map(OccupancyGrid &grid) :grid(grid) {
+Map::Map(OccupancyGrid &grid) {
 	cv::namedWindow("OccupancyGrid-view");
 
 	config = ConfigurationManager::Instance();
 
-	robotSizeInPixels = config->robotSize().height / 100.0 / grid.getResolution();
+	// Blow the grid
+	OccupancyGrid blownGrid = getBlownGrid(grid);
 
-	convertToBlownGrid();
-	initMat(*blownGrid);
+	// Init the mat by the grid values
+	initMat(blownGrid);
+
+	// Rotate the mat by -30 degrees
+	rotateMat();
 }
 
 void Map::initMat(OccupancyGrid &grid) {
@@ -30,22 +34,20 @@ void Map::initMat(OccupancyGrid &grid) {
 			initCell(grid,i,j);
 		}
 	}
-
-	mat = rotateMat();
 }
 
-Mat Map::rotateMat() {
+void Map::rotateMat() {
 
-	cv::Mat warp_dst = cv::Mat::zeros( mat.rows, mat.cols, mat.type() );
+	cv::Mat resultMat = cv::Mat::zeros(mat.rows, mat.cols, mat.type());
 
 	Point2f center = Point2f( mat.cols/2, mat.rows/2 );
 	double angle = -30.0;
 	double scale = 1.0;
 
-	Mat rot_mat = cv::getRotationMatrix2D(center, angle, scale);
-	cv::warpAffine(mat, warp_dst, rot_mat, warp_dst.size());
+	Mat rotatedMat = cv::getRotationMatrix2D(center, angle, scale);
+	cv::warpAffine(mat, resultMat, rotatedMat, resultMat.size());
 
-	return warp_dst;
+	mat = resultMat;
 }
 
 void Map::initCell (OccupancyGrid &grid, int i, int j) {
@@ -58,6 +60,15 @@ void Map::initCell (OccupancyGrid &grid, int i, int j) {
 
 	paintCell(i, j, pixel);
 }
+
+Cell Map::getCell(int row, int col) {
+	if (mat.at<cv::Vec3b>(row,col)[0] == 255) return CELL_FREE;
+	else if (mat.at<cv::Vec3b>(row,col)[0] == 0) return CELL_OCCUPIED;
+	else return CELL_UNKNOWN;
+}
+
+int Map::getHeight() { return mat.rows; }
+int Map::getWidth() { return mat.cols; }
 
 void Map::paintCell (int i, int j, int pixelR, int pixelG, int pixelB) {
 	mat.at<cv::Vec3b>(i,j)[0] = pixelB;
@@ -87,13 +98,13 @@ int Map::getNumOfPixelsToBlow(double mapResolution, int robotHeight, int robotWi
 	return blowSize / mapResolution;
 }
 
-void Map::convertToBlownGrid() {
+OccupancyGrid Map::getBlownGrid(OccupancyGrid grid) {
 
 	int blowRadius = getNumOfPixelsToBlow(grid.getResolution(),
 			config->robotSize().height,
 			config->robotSize().width);
 
-	blownGrid = new OccupancyGrid(grid);
+	OccupancyGrid* blownGrid = new OccupancyGrid(grid);
 
 	for (int i = 0; i<grid.getHeight(); i++) {
 		for (int j = 0; j<grid.getWidth(); j++) {
@@ -111,42 +122,11 @@ void Map::convertToBlownGrid() {
 			}
 		}
 	}
-}
 
-void Map::convertToCoarseGrid() {
-
-	int rows = grid.getHeight() / robotSizeInPixels;
-	int cols = grid.getWidth() / robotSizeInPixels;
-	double resolution = grid.getResolution() * robotSizeInPixels;
-
-	coarseGrid = new OccupancyGrid(rows, cols, resolution);
-
-	// i and j go through the new grid
-	for (int i = 0; i < rows; i++) {
-		for (int j = 0; j < cols; j++) {
-			int row = i * robotSizeInPixels;
-			int col = j * robotSizeInPixels;
-
-			bool isOccupied = false;
-
-			// k and m go through the origin grid
-			for (int k = row; k < row + robotSizeInPixels && !isOccupied; k++) {
-				for (int m = col; m < col + robotSizeInPixels; m++) {
-					if (grid.getCell(k, m) != CELL_FREE) {
-						isOccupied = true;
-						break;
-					}
-				}
-			}
-
-			if (isOccupied) coarseGrid->setCell(i, j, CELL_OCCUPIED);
-			else coarseGrid->setCell(i, j, CELL_FREE);
-		}
-	}
+	return *blownGrid;
 }
 
 Map::~Map() {
 	cv::destroyWindow("OccupancyGrid-view");
-	delete coarseGrid;
 }
 

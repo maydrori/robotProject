@@ -46,7 +46,7 @@ void RobotManager::Start()
 	{
 		this->map->show();
 
-		// Update the particle manager and get the best particle
+//		 Update the particle manager and get the best particle
 		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
 
 		if (best)
@@ -57,8 +57,8 @@ void RobotManager::Start()
 
 			currX = best->mX;
 			currY = best->mY;
-			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY;
-			cout << "currX=" << currX << ", currY=" << currY << endl;
+//			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY;
+//			cout << "currX=" << currX << ", currY=" << currY << endl;
 
 //			cout << "I have best!! " << endl;
 			// Update the waypoint manager

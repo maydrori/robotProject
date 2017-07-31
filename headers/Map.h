@@ -17,26 +17,21 @@ using namespace cv;
 class Map {
 private:
 	ConfigurationManager* config;
-	OccupancyGrid& grid;
-	OccupancyGrid* coarseGrid;
 	cv::Mat mat;
-	//int robotHeightInPixels;
-	//int robotWidthInPixels;
-	int robotSizeInPixels;
 
 	void initMat(OccupancyGrid &grid);
-	Mat rotateMat();
+	void rotateMat();
 	void initCell(OccupancyGrid &grid, int i, int j);
-	//OccupancyGrid getBlownGrid(OccupancyGrid grid, int robotHeight, int robotWidth);
-	void convertToBlownGrid();
-	void convertToCoarseGrid();
+	OccupancyGrid getBlownGrid(OccupancyGrid grid);
 	int getNumOfPixelsToBlow(double mapResolution, int robotHeight, int robotWidth);
 public:
 	Map(OccupancyGrid &grid);
-	OccupancyGrid* blownGrid;
 	void show();
 	void paintCell(int i, int j, int pixelR, int pixelG, int pixelB);
 	void paintCell(int i, int j, int pixel);
+	Cell getCell(int row, int col);
+	int getHeight();
+	int getWidth();
 	virtual ~Map();
 };
 

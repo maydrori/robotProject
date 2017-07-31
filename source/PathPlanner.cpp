@@ -7,8 +7,8 @@
 
 #include "../headers/PathPlanner.h"
 
-PathPlanner::PathPlanner(OccupancyGrid& grid, int startRow, int startCol) :
-	grid(grid), startRow(startRow), startCol(startCol){
+PathPlanner::PathPlanner(Map& map, int startRow, int startCol) :
+	map(map), startRow(startRow), startCol(startCol){
 }
 
 PathPlanner::~PathPlanner() {
@@ -17,8 +17,8 @@ PathPlanner::~PathPlanner() {
 
 void PathPlanner::buildGraph() {
 
-	int rows = grid.getHeight();
-	int cols = grid.getWidth();
+	int rows = map.getHeight();
+	int cols = map.getWidth();
 
 	mat.resize(rows);
 	for (int i = 0; i < rows; ++i) {
@@ -30,7 +30,7 @@ void PathPlanner::buildGraph() {
 		for (int j = 0; j <  cols; ++j) {
 
 			// Getting current cell
-			Cell c = grid.getCell(i, j);
+			Cell c = map.getCell(i, j);
 
 			// Initializing node if the is free
 			if (c == CELL_FREE) {
@@ -64,7 +64,7 @@ vector<Node*> PathPlanner::getSuccessors(Node* node) {
 	vector<Node*> successors;
 
 	// Upper
-	if (row < grid.getHeight() - 1 && mat[row + 1][col]) {
+	if (row < map.getHeight() - 1 && mat[row + 1][col]) {
 		successors.push_back(mat[row + 1][col]);
 	}
 
@@ -74,7 +74,7 @@ vector<Node*> PathPlanner::getSuccessors(Node* node) {
 	}
 
 	// Right
-	if (col < grid.getWidth() - 1 && mat[row][col + 1]) {
+	if (col < map.getWidth() - 1 && mat[row][col + 1]) {
 		successors.push_back(mat[row][col + 1]);
 	}
 
@@ -136,9 +136,9 @@ Path PathPlanner::computeShortestPath(int destRow, int destCol) {
 	priority_queue<Node*, vector<Node*>, NodeCostComparator> openList;
 
 	// Initializing closed list
-	int rows = grid.getHeight();
-	int cols = grid.getWidth();
-	bool** closedList = new bool*[grid.getHeight()];
+	int rows = map.getHeight();
+	int cols = map.getWidth();
+	bool** closedList = new bool*[map.getHeight()];
 	for (int i = 0; i < rows; ++i) {
 		closedList[i] = new bool[cols];
 		for (int j = 0; j < cols; j++) {

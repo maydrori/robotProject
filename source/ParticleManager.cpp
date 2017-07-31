@@ -53,9 +53,9 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 		// * outside of the map
 		// * on an occupied cell
 		if (current->belief() < PARTICLE_REMOVAL_THRESHOLD ||
-			current->getY() < 0 || current->getY() >= map->blownGrid->getHeight() ||
-			current->getX() < 0 || current->getX() >= map->blownGrid->getWidth() ||
-			map->blownGrid->getCell(current->getY(), current->getX()) == CELL_OCCUPIED)
+			current->getY() < 0 || current->getY() >= map->getHeight() ||
+			current->getX() < 0 || current->getX() >= map->getWidth() ||
+			map->getCell(current->getY(), current->getX()) == CELL_OCCUPIED)
 		{
 			delete current;
 			continue;
@@ -114,10 +114,10 @@ void ParticleManager::CreateRandomParticle(Map* map)
 
 	do
 	{
-		nX = rand() % map->blownGrid->getWidth();
-		nY = rand() % map->blownGrid->getHeight();
+		nX = rand() % map->getWidth();
+		nY = rand() % map->getHeight();
 	}
-	while (map->blownGrid->getCell(nY, nX) == CELL_OCCUPIED);
+	while (map->getCell(nY, nX) == CELL_OCCUPIED);
 
 	nYaw = (rand() % 3600) / 10;
 

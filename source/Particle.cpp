@@ -71,7 +71,7 @@ double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 //			cout << "newX: " << newX << endl;
 //			cout << "newY: " << newY << endl;
 
-			if (map->blownGrid->getCell(newX, newY) == HamsterAPI::CELL_OCCUPIED)
+			if (map->getCell(newX, newY) == HamsterAPI::CELL_OCCUPIED)
 			{
 				hits++;
 			} else {
@@ -148,7 +148,7 @@ Particle* Particle::RandomCloseParticle(Map* map)
 			radius++;
 		}
 	}
-	while (nX >= 0 && nY >= 0 && nX < map->blownGrid->getWidth() && nY < map->blownGrid->getHeight() && map->blownGrid->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED);
+	while (nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight() && map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED);
 
 	Particle* random = new Particle(nX, nY, nYaw);
 	random->mBelief = this->mBelief;\

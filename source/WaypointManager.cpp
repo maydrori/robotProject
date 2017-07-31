@@ -23,7 +23,7 @@ void WaypointManager::SetDestination(int nStartX, int nStartY, int nGoalX, int n
 
 	// Perform A*
 //	vector<Node*> path = this->mGraph->CalculatePath(nStartX, nStartY, nGoalX, nGoalY);
-	PathPlanner pln(*(mMap->blownGrid), nStartY, nStartX);
+	PathPlanner pln(*mMap, nStartY, nStartX);
 	Path allPath = pln.computeShortestPath(nGoalY, nGoalX);
 	Path path = getWaypoints(allPath);
 cout << "finish a* and way points = " << path.size() << endl;
