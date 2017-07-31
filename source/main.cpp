@@ -190,10 +190,10 @@ int main() {
 		manager->Start();
 
 		bConnectionSuccedd = true;
-	//	while (hamster->isConnected()) {
-	//		map->show();
-	//		sleep(0.2);
-	//	}
+//		while (hamster->isConnected()) {
+//			map->show();
+//			sleep(0.2);
+//		}
 
 	}
 	catch(const HamsterAPI::HamsterError & message_error)

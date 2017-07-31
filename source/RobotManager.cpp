@@ -44,13 +44,14 @@ void RobotManager::Start()
 	// Start the execution of the robot
 	while (robot->isConnected())
 	{
-//		this->map->show();
+		this->map->show();
 
 		// Update the particle manager and get the best particle
 		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
 
 		if (best)
 		{
+			map->paintCell(best->getX(), best->getY(), 0, 180, 0);
 			deltaX = abs(best->mX - currX);
 			deltaY = abs(best->mY - currY);
 
