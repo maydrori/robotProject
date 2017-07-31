@@ -22,9 +22,9 @@ class ParticleManager
 
 	public:
 		ParticleManager(Map* map);
-		//virtual ~ParticleManager(); // nu bemet kilu nase po mashu
+		virtual ~ParticleManager();
 
-		Particle* Update(HamsterAPI::Hamster* robot, Map* map);
+		Particle* Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw);
 		void ResampleParticles(Map* map);
 		void CreateRandomParticle(Map* map);
 };

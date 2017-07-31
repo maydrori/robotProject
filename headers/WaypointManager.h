@@ -29,7 +29,7 @@ class WaypointManager
 		WaypointManager(HamsterAPI::Hamster* robot, Map* map);
 
 		void SetDestination(int nStartX, int nStartY, int nGoalX, int nGoalY);
-		void Update(Particle* best);
+		void Update(Particle* best, int* deltaX, int* deltaY, int* deltaYaw);
 		Path getWaypoints(Path path);
 };
 

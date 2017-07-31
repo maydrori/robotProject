@@ -1,5 +1,6 @@
 #include "../headers/ParticleManager.h"
 #include <algorithm>
+
 ParticleManager::ParticleManager(Map* map)
 {
 	// Create a particle according to start position
@@ -11,6 +12,10 @@ ParticleManager::ParticleManager(Map* map)
 	{
 		this->mParticles.push(start->RandomCloseParticle(map));
 	}
+}
+
+ParticleManager::~ParticleManager() {
+
 }
 
 void ParticleManager::ResampleParticles(Map* map)
@@ -28,8 +33,9 @@ bool ParticleCompareBeliefs(Particle* a, Particle* b)
 	return (a->belief() > b->belief());
 }
 
-Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map)
+Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
+	cout << "Starting to update paritcle" <<  endl;
 	vector<Particle*> remaining;
 	Particle* best;
 
@@ -40,7 +46,7 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map)
 		this->mParticles.pop();
 
 		// Update it
-		current->Update(robot, map);
+		current->Update(robot, map, deltaX, deltaY, deltaYaw);
 
 		// Check deletion conditions
 		// * removal threshold
@@ -69,6 +75,8 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map)
 		return NULL;
 	}
 
+	cout << "Sorting" << endl;
+
 	// Sort the remaining particles vector by highest priority
 	std::sort(remaining.begin(), remaining.end(), ParticleCompareBeliefs);
 
@@ -78,8 +86,6 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map)
 	// Loop through the remaining particles and add them to the particle stack
 	for (int i = 0; i < remaining.size() && this->mParticles.size() < MAX_PARTICLES; i++)
 	{
-		this->mParticles.push(remaining[i]);
-
 		// If the current particle is strongly believable, then it should give birth to more like it
 		if (remaining[i]->belief() >= PARTICLE_STRONG_SIGNAL_THRESHOLD)
 		{

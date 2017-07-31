@@ -99,7 +99,7 @@ Path WaypointManager::getWaypoints(Path path) {
 	return smooth;
 }
 
-void WaypointManager::Update(Particle* best)
+void WaypointManager::Update(Particle* best, int* deltaX, int* deltaY, int* deltaYaw)
 {
 	if (this->mCurrentTarget != NULL)
 	{
@@ -111,6 +111,13 @@ void WaypointManager::Update(Particle* best)
 		// Calculate deltas
 		int dRow = abs(this->mCurrentTarget->row - best->getY());
 		int dCol = abs(this->mCurrentTarget->col - best->getX());
+
+		// Out params
+		*deltaX = dCol;
+		*deltaY = dRow;
+		// TODO: How to get angle delta?
+		*deltaYaw = 0;
+
 		cout << "dRow=" << this->mCurrentTarget->row << "," << best->getY() << endl;
 		cout << "dCOl=" << this->mCurrentTarget->col << "," << best->getX() << endl;
 
