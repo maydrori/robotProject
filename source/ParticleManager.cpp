@@ -3,6 +3,11 @@
 
 ParticleManager::ParticleManager(Map* map)
 {
+	this->init(map);
+}
+
+void ParticleManager::init(Map* map)
+{
 	// Create a particle according to start position
 	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
 	this->mParticles.push(start);
@@ -20,12 +25,14 @@ ParticleManager::~ParticleManager() {
 
 void ParticleManager::ResampleParticles(Map* map)
 {
-	// Create maximum random particles
-	// This increases the chance for a hit when we're out of ideas
-	while (this->mParticles.size() < MAX_PARTICLES)
-	{
-		this->CreateRandomParticle(map);
-	}
+//	// Create maximum random particles
+//	// This increases the chance for a hit when we're out of ideas
+//	while (this->mParticles.size() < MAX_PARTICLES)
+//	{
+//		this->CreateRandomParticle(map);
+//	}
+
+	init(map);
 }
 
 bool ParticleCompareBeliefs(Particle* a, Particle* b)
