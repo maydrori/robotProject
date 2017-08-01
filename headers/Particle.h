@@ -3,7 +3,7 @@
 
 #include "Map.h"
 
-#define PARTICLE_CREATE_IN_RADIUS 	 2
+#define PARTICLE_CREATE_IN_RADIUS 	 3
 #define NUM_OF_RADIUS_TRIES			 20
 #define PARTICLE_CREATE_YAW_RANGE	 30 // = 5.0
 #define toRad(a) 					 (((a) / 180) * M_PI)

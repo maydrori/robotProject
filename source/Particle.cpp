@@ -37,48 +37,40 @@ double Particle::ProbByMove(int dx, int dy, double dyaw)
 
 double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 {
+	int mapResolution = ConfigurationManager::Instance()->mapResolution();
+	int hits = 0;
+	int misses = 0;
 
-	double hits = 0.0;
-	double misses = 0.0;
-	int scanSize = scan.getScanSize();
-	double total = 0.0;
-	for (int i = 0; i < scanSize; ++i)
-	{
-		int disatnce = scan.getDistance(i);
-		int maxRange = scan.getMaxRange();
+	for (int i = 0; i < scan.getScanSize(); i++) {
+		double angle = scan.getScanAngleIncrement() * i * DEG2RAD;
 
-		if (disatnce < maxRange - 0.001)
-		{
-			double mapRes = ConfigurationManager::Instance()->mapResolution();
-			double radian = ((((int)this->mYaw) + 180 + i) % 360) * M_PI / 180.0;
-			int newX = this->mX + disatnce * cos(radian) / mapRes;
-			int newY = this->mY + disatnce * sin(radian) / mapRes;
+		if (scan.getDistance(i) < scan.getMaxRange() - 0.001) {
 
-			if (newX >= 0 && newY >= 0 && newX <= map->getWidth() && newY <= map->getHeight()
-					&& map->getCell(newY, newX) == HamsterAPI::CELL_OCCUPIED)
-			{
+			// Obstacle distance count
+			double obsX = this->mX + scan.getDistance(i) * cos(angle + 90*DEG2RAD + this->mYaw * DEG2RAD);
+			double obsY = this->mY + scan.getDistance(i) * sin(angle + 90*DEG2RAD + this->mYaw * DEG2RAD);
+
+			int pixelY = (double)(map->getHeight() / 2) - obsY / mapResolution;
+			int pixelX = obsX / mapResolution + (double)(map->getWidth() / 2);
+
+			if (pixelY >= 0 && pixelX >= 0 && pixelY <= map->getHeight() && pixelX <= map->getWidth() &&
+					map->getCell(pixelY, pixelX) == HamsterAPI::CELL_OCCUPIED) {
 				hits++;
 			} else {
 				misses++;
 			}
-
-			total++;
 		}
 	}
-	return ((double) hits/ (total));
+	return (float)hits / (hits + misses);
 }
 
 void Particle::Update(HamsterAPI::LidarScan scan, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
 	// lets say it doesnt cross borders
-	this->mX += deltaX;
-	this->mY += deltaY;
-	this->mYaw += deltaYaw;
-
-	if (this->mYaw < 0)
-	{
-		this->mYaw += 360;
-	}
+	double root = sqrt(deltaX * deltaX + deltaY * deltaY);
+	this->mX += root * cos((double)(this->mYaw * DEG2RAD));
+	this->mY += root * sin((double)(this->mYaw  * DEG2RAD));
+	this->mYaw = fmod((double)(this->mYaw + deltaYaw), 360.0);
 
 	//double move = this->ProbByMove(deltaX, deltaY, deltaYaw);
 	double measures = this->ProbByScan(scan, map);
@@ -109,26 +101,18 @@ Particle* Particle::RandomCloseParticle(Map* map)
 	// Generate a random particle around the current particle (within PARTICLE_CREATE_IN_RADIUS)
 	int radius = PARTICLE_CREATE_IN_RADIUS;
 	if (radius < 2) radius = 2;
-	int tryCounter = 0;
 	do
 	{
-		tryCounter++;
-
 		int rnd1 = rand();
 		int rnd2 = rand();
 		// Generate (x,y) in range (-PARTICLE_CREATE_IN_RADIUS, +PARTICLE_CREATE_IN_RADIUS)
 		nX = this->mX + (rnd1 % (radius * 2)) - radius;
 		nY = this->mY + (rnd2 % (radius * 2)) - radius;
-
-//		// If there were NUM_OF_RADIUS_TRIES tries withous success we increase the radius
-//		if (tryCounter % NUM_OF_RADIUS_TRIES == 0 ) {
-//			radius++;
-//		}
 	}
-	while ((!((nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight())))||
-			(nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight() && map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED));
+	while ((nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight() && map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED));
 
 	Particle* random = new Particle(nX, nY, nYaw);
 	random->mBelief = this->mBelief;
+//	map->paintCell(random->mY, random->mX, 0, 100, 0);
 	return (random);
 }

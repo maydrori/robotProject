@@ -3,19 +3,23 @@
 
 ParticleManager::ParticleManager(Map* map)
 {
-	this->init(map);
+//	CreateRandomParticle(map);
+	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
+	this->init(map, start);
 }
 
-void ParticleManager::init(Map* map)
+void ParticleManager::init(Map* map, Particle* p)
 {
 	// Create a particle according to start position
-	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
-	this->mParticles.push(start);
+//	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
+	this->mParticles.push(p);
 
 	// Create more like it
 	while (this->mParticles.size() < MAX_PARTICLES)
 	{
-		this->mParticles.push(start->RandomCloseParticle(map));
+		Particle* pNew = p->RandomCloseParticle(map);
+//		map->paintCell(p->getY(), p->getX(), 0, 100, 0);
+		this->mParticles.push(pNew);
 	}
 }
 
@@ -25,14 +29,15 @@ ParticleManager::~ParticleManager() {
 
 void ParticleManager::ResampleParticles(Map* map)
 {
-//	// Create maximum random particles
-//	// This increases the chance for a hit when we're out of ideas
-//	while (this->mParticles.size() < MAX_PARTICLES)
-//	{
-//		this->CreateRandomParticle(map);
-//	}
-
-	init(map);
+	// Create maximum random particles
+	// This increases the chance for a hit when we're out of ideas
+	while (this->mParticles.size() < MAX_PARTICLES)
+	{
+		this->CreateRandomParticle(map);
+	}
+//	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
+//
+//	init(map, start);
 }
 
 bool ParticleCompareBeliefs(Particle* a, Particle* b)

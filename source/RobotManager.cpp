@@ -52,7 +52,7 @@ void RobotManager::Start()
 
 		if (best)
 		{
-			map->paintCell(best->getX(), best->getY(), 0, 180, 0);
+			map->paintCell(best->getY(), best->getX(), 0, 180, 0);
 			deltaX = best->mX - currX;
 			deltaY = best->mY - currY;
 			deltaYaw = best->getYaw() - currYaw;
@@ -68,7 +68,7 @@ void RobotManager::Start()
 			this->mWaypointManager->Update(best, &deltaX, &deltaY, &deltaYaw);
 		}
 
-		sleep(0.5);
+		sleep(0.2);
 	}
 }
 

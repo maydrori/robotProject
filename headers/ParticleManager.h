@@ -19,7 +19,7 @@ class ParticleManager
 {
 	private:
 		stack<Particle*> mParticles;
-		void init(Map* map);
+		void init(Map* map, Particle* p);
 
 	public:
 		ParticleManager(Map* map);
