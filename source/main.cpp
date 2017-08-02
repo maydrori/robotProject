@@ -8,7 +8,7 @@
 #define DEBUG
 
 // Delete on May's computer
-#define GUY
+#define MAY
 
 #ifdef GUY
 #define CONFIG_PATH "/home/user/Desktop/robotProject/params/parameters.txt"

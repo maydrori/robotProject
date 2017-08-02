@@ -44,7 +44,7 @@ void RobotManager::Start()
 	// Start the execution of the robot
 	while (robot->isConnected())
 	{
-		this->map->show();
+//		this->map->show();
 
 //		 Update the particle manager and get the best particle
 		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);

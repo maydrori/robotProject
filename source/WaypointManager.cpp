@@ -168,7 +168,7 @@ void WaypointManager::NextTarget(bool bHappy)
 	}
 	else
 	{
-//		cout << "DriveToWayPoint" << endl;
+		cout << "DriveToWayPoint" << endl;
 //		double fResolution = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
 //		int x = next->x() * fResolution;
 //		int y = next->y() * fResolution;
