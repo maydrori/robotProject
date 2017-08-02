@@ -172,40 +172,32 @@ int main() {
 
 	bool bConnectionSuccedd = false;
 	while (!bConnectionSuccedd) {
-	try {
+		try {
 
-		// Init the hamster
-		hamster = new Hamster(1);
-		sleep(3);
+			// Init the hamster
+			hamster = new Hamster(1);
+			sleep(3);
 
-		// Init the configuration
-		ConfigurationManager::Init(CONFIG_PATH);
+			// Init the configuration
+			ConfigurationManager::Init(CONFIG_PATH);
 
-		// Create a map by the hamster's slam map
-		OccupancyGrid grid = hamster->getSLAMMap();
+			// Create a map by the hamster's slam map
+			OccupancyGrid grid = hamster->getSLAMMap();
 
-		Map* map = new Map(grid);
+			Map* map = new Map(grid);
 
-		RobotManager* manager = new RobotManager(hamster, map);
-		manager->Start();
+			RobotManager* manager = new RobotManager(hamster, map);
+			manager->Start();
 
-		bConnectionSuccedd = true;
-//		while (hamster->isConnected()) {
-//			map->show();
-//			sleep(0.2);
-//		}
+			bConnectionSuccedd = true;
 
-	}
-//	catch(const HamsterAPI::HamsterError & message_error)
-//	{
-//		delete hamster;
-//
-//		cout << "shit2" << endl;
-//	}
-	catch(const std::exception& e)
-	{
-		cout << e.what() << endl;
-	}
+		}
+		catch(const HamsterAPI::HamsterError & e) {
+			cout << "shit1," <<  e.what() << endl;
+		}
+		catch(const std::exception& e) {
+			cout << "shit2," <<  e.what() << endl;
+		}
 	}
 	return 0;
 }

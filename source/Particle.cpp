@@ -13,54 +13,32 @@ Particle::~Particle()
 {
 }
 
-double Particle::ProbByMove(int dx, int dy, double dyaw)
-{
-	// Calculate scores based on yaw and distance
-	double distance = sqrt(pow(dx, 2) + pow(dy, 2));
-	double distScore = pow(DISTANCE_SCORE_MODIFIER, distance);
-	double yawScore = 1 - (abs(dyaw) / 180);
-
-#ifdef TEST_MODE
-	cout << "PBM:[";
-	cout << "dist: " << distScore <<"|yawScore: " << yawScore << "]";
-#endif
-
-	if (distScore < yawScore)
-	{
-		return (distScore);
-	}
-	else
-	{
-		return (yawScore);
-	}
-}
-
 double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 {
-	int mapResolution = ConfigurationManager::Instance()->mapResolution();
+	double mapResolution = map->blownGrid.getResolution();
 	int hits = 0;
 	int misses = 0;
 
 	for (int i = 0; i < scan.getScanSize(); i++) {
+
 		double angle = scan.getScanAngleIncrement() * i * DEG2RAD;
 
 		if (scan.getDistance(i) < scan.getMaxRange() - 0.001) {
 
 			// Obstacle distance count
-			double obsX = this->mX + scan.getDistance(i) * cos(angle + 90*DEG2RAD + this->mYaw * DEG2RAD);
-			double obsY = this->mY + scan.getDistance(i) * sin(angle + 90*DEG2RAD + this->mYaw * DEG2RAD);
-
-			int pixelY = (double)(map->getHeight() / 2) - obsY / mapResolution;
-			int pixelX = obsX / mapResolution + (double)(map->getWidth() / 2);
+			int pixelX = mX + scan.getDistance(i) / mapResolution * cos( 180*DEG2RAD + this->mYaw * DEG2RAD - angle);
+			int pixelY = mY + scan.getDistance(i) / mapResolution * sin( 180*DEG2RAD + this->mYaw * DEG2RAD - angle);
 
 			if (pixelY >= 0 && pixelX >= 0 && pixelY <= map->getHeight() && pixelX <= map->getWidth() &&
-					map->getCell(pixelY, pixelX) == HamsterAPI::CELL_OCCUPIED) {
+					map->blownGrid.getCell(pixelY, pixelX) == HamsterAPI::CELL_OCCUPIED) {
 				hits++;
 			} else {
 				misses++;
 			}
 		}
 	}
+
+//	cout <<"hits="<<hits<<"misses="<<misses<<" = " <<((float)hits / (hits + misses))<<endl;
 	return (float)hits / (hits + misses);
 }
 
@@ -72,10 +50,13 @@ void Particle::Update(HamsterAPI::LidarScan scan, Map* map, int deltaX, int delt
 	this->mY += root * sin((double)(this->mYaw  * DEG2RAD));
 	this->mYaw = fmod((double)(this->mYaw + deltaYaw), 360.0);
 
-	//double move = this->ProbByMove(deltaX, deltaY, deltaYaw);
+//	this->mX += deltaX;
+//	this->mY += deltaY;
+//	this->mYaw += deltaYaw;
+
 	double measures = this->ProbByScan(scan, map);
 	mes = measures;
-	//mov = move;
+
 	this->last = last;
 	this->mBelief = measures;
 
@@ -83,13 +64,6 @@ void Particle::Update(HamsterAPI::LidarScan scan, Map* map, int deltaX, int delt
 	{
 		this->mBelief = 1;
 	}
-
-#ifdef TEST_MODE
-	cout << "P:[" << mX << ", " << mY << ", " << mYaw << "] " <<
-			"R:[" << robot->x() << ", " << robot->y() << ", " << robot->yaw() << "]" <<
-			"Belief: " << mBelief <<
-			"(move: " << move << ")(measures: " << measures << ")(last: " << last << ")" << endl;
-#endif
 }
 
 Particle* Particle::RandomCloseParticle(Map* map)
@@ -113,6 +87,6 @@ Particle* Particle::RandomCloseParticle(Map* map)
 
 	Particle* random = new Particle(nX, nY, nYaw);
 	random->mBelief = this->mBelief;
-//	map->paintCell(random->mY, random->mX, 0, 100, 0);
+//	map->paintCell(nY, nX, 0, 100, 0);
 	return (random);
 }

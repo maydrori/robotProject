@@ -14,9 +14,11 @@ void DriveToWaypoint::Action(Particle* best)
 {
 	double fAngleToWaypoint = this->GetAngleToWaypoint(best);
 
+//	cout <<"best=" << best->mX << ","<<best->mY << ", fAngleToWaypoint=" << fAngleToWaypoint << endl;
 	// If the robot is facing towards the waypoint, drive straight
 	if (this->IsFacingDirection(fAngleToWaypoint, best))
 	{
+//		cout <<"drive straight"<<endl;
 		// TODO: Check speed with a real robot
 		this->mRobot->sendSpeed(MOVEMENT_SPEED, 0);
 	}
@@ -38,7 +40,7 @@ void DriveToWaypoint::Action(Particle* best)
 		{
 			fWalkSpeedWhileTurning = MOVEMENT_SPEED_WHILE_TURNING;
 		}
-
+//		cout <<"drive angle="<<(TURNING_SPEED * nTurnMultiplier)<<endl;
 		// TODO: Check speed with a real robot
 		this->mRobot->sendSpeed(fWalkSpeedWhileTurning, TURNING_SPEED * nTurnMultiplier);
 	}
@@ -94,10 +96,11 @@ double DriveToWaypoint::GetAngleToWaypoint(Particle* best)
 	// Calculate delta from waypoint to robot
 	int dy = best->getY() - this->mDstY;
 	int dx = this->mDstX - best->getX();
-
+//cout << "dy="<< best->getY() <<"-" << this->mDstY << endl;
+//cout << "dx="<< this->mDstX <<"-" << best->getX() << endl;
 	// Calculate the angle between robot to waypoint
 	double fAngleToWaypoint = toDeg(atan2(dy, dx));
-
+//cout << fAngleToWaypoint << endl;
 	if (fAngleToWaypoint < 0)
 	{
 		fAngleToWaypoint += 360;

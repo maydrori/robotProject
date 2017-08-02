@@ -22,7 +22,6 @@ void WaypointManager::SetDestination(int nStartX, int nStartY, int nGoalX, int n
 	this->mRobot->sendSpeed(0, 0);
 
 	// Perform A*
-//	vector<Node*> path = this->mGraph->CalculatePath(nStartX, nStartY, nGoalX, nGoalY);
 	PathPlanner pln(*mMap, nStartY, nStartX);
 	Path allPath = pln.computeShortestPath(nGoalY, nGoalX);
 	Path path = getWaypoints(allPath);
@@ -110,13 +109,8 @@ void WaypointManager::Update(Particle* best, int* deltaX, int* deltaY, int* delt
 		// Calculate deltas
 		int dRow = abs(this->mCurrentTarget->row - best->getY());
 		int dCol = abs(this->mCurrentTarget->col - best->getX());
-//cout << "this->mCurrentTarget->row=" << this->mCurrentTarget->row << ", best->getY()=" << best->getY() << endl;
-//cout << "this->mCurrentTarget->col=" << this->mCurrentTarget->col << ", best->getX()=" << best->getX() << endl;
-		// Out params
-//		*deltaX = dCol;
-//		*deltaY = dRow;
-		// TODO: How to get angle delta?
-//		*deltaYaw = 0;
+//cout << "dRow=" << dRow<< ": this->mCurrentTarget->row=" << this->mCurrentTarget->row << ", best->getY()=" << best->getY() << endl;
+//cout << "dCol=" << dCol<< ":this->mCurrentTarget->col=" << this->mCurrentTarget->col << ", best->getX()=" << best->getX() << endl;
 
 		int nAllowedRadius = ROBOT_REACHED_WAYPOINT_RADIUS;
 

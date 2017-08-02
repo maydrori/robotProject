@@ -25,6 +25,7 @@ private:
 	OccupancyGrid getBlownGrid(OccupancyGrid grid);
 	int getNumOfPixelsToBlow(double mapResolution, int robotHeight, int robotWidth);
 public:
+	OccupancyGrid blownGrid;
 	Map(OccupancyGrid &grid);
 	void show();
 	void paintCell(int i, int j, int pixelR, int pixelG, int pixelB);

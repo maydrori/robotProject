@@ -6,10 +6,10 @@
 #include "Map.h"
 #include <HamsterAPIClientCPP/Hamster.h>
 
-#define PARTICLE_REMOVAL_THRESHOLD 			0.2
+#define PARTICLE_REMOVAL_THRESHOLD 			0.1
 #define PARTICLE_STRONG_SIGNAL_THRESHOLD	0.7
 #define PARTICLE_INIT_COUNT					100
-#define MAX_PARTICLES 						500
+#define MAX_PARTICLES 						300
 #define PARTICLE_DUPLICATION_COUNT			10
 
 using namespace HamsterAPI;

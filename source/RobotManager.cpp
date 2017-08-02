@@ -40,28 +40,29 @@ void RobotManager::Start()
 
 	int currX = this->mStartX;
 	int currY = this->mStartY;
-	int currYaw = 0;
+	int currYaw = ConfigurationManager::Instance()->start().x;
 
 	// Start the execution of the robot
 	while (robot->isConnected())
 	{
-//		this->map->show();
+		this->map->show();
 
-//		 Update the particle manager and get the best particle
+		// Update the particle manager and get the best particle
 		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
+//		Particle* best = NULL;
 
 		if (best)
 		{
 			map->paintCell(best->getY(), best->getX(), 0, 180, 0);
-			deltaX = best->mX - currX;
-			deltaY = best->mY - currY;
-			deltaYaw = best->getYaw() - currYaw;
+			deltaX = abs(best->mX - currX);
+			deltaY = abs(best->mY - currY);
+			deltaYaw = abs(best->getYaw() - currYaw);
 
 			currX = best->mX;
 			currY = best->mY;
 			currYaw = best->getYaw();
-			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY;
-//			cout << "currX=" << currX << ", currY=" << currY << endl;
+//			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY;
+//			cout << "best=" << best->getX() << ", =" << best->getY() << endl;
 
 //			cout << "I have best!! " << endl;
 			// Update the waypoint manager

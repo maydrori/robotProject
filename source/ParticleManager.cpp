@@ -18,7 +18,7 @@ void ParticleManager::init(Map* map, Particle* p)
 	while (this->mParticles.size() < MAX_PARTICLES)
 	{
 		Particle* pNew = p->RandomCloseParticle(map);
-//		map->paintCell(p->getY(), p->getX(), 0, 100, 0);
+//		map->paintCell(pNew->getY(), pNew->getX(), 0, 100, 0);
 		this->mParticles.push(pNew);
 	}
 }
@@ -35,9 +35,6 @@ void ParticleManager::ResampleParticles(Map* map)
 	{
 		this->CreateRandomParticle(map);
 	}
-//	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
-//
-//	init(map, start);
 }
 
 bool ParticleCompareBeliefs(Particle* a, Particle* b)
@@ -47,7 +44,6 @@ bool ParticleCompareBeliefs(Particle* a, Particle* b)
 
 Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
-	cout << "Starting to update paritcle" <<  endl;
 	vector<Particle*> remaining;
 	Particle* best;
 
@@ -61,17 +57,18 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 
 		// Update it
 		current->Update(scan, map, deltaX, deltaY, deltaYaw);
-		cout << "belief: " << current->belief() <<  endl;
 
 		// Check deletion conditions
 		// * removal threshold
 		// * outside of the map
 		// * on an occupied cell
-		if (current->belief() < PARTICLE_REMOVAL_THRESHOLD ||
-			current->getY() < 0 || current->getY() >= map->getHeight() ||
+		if (current->getY() < 0 || current->getY() >= map->getHeight() ||
 			current->getX() < 0 || current->getX() >= map->getWidth() ||
-			map->getCell(current->getY(), current->getX()) == CELL_OCCUPIED)
-		{
+			map->getCell(current->getY(), current->getX()) == CELL_OCCUPIED) {
+			delete current;
+			continue;
+		}
+		else if (current->belief() < PARTICLE_REMOVAL_THRESHOLD) {
 			delete current;
 			continue;
 		}
@@ -85,12 +82,12 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 	if (remaining.size() == 0)
 	{
 		// TODO: Decide how to handle this shit
-		cout << "Resampling!" << endl;
+//		cout << "Resampling!" << endl;
 		this->ResampleParticles(map);
 		return NULL;
 	}
 
-	cout << "Sorting" << endl;
+//	cout << "Sorting" << endl;
 
 	// Sort the remaining particles vector by highest priority
 	std::sort(remaining.begin(), remaining.end(), ParticleCompareBeliefs);
@@ -98,7 +95,7 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 	// The best particle should be the first particle in the vector
 	best = remaining.front();
 
-	cout << "i have best belief: " << best->belief() << endl;
+//	cout << "i have best belief: " << best->belief() << endl;
 
 	// Loop through the remaining particles and add them to the particle stack
 	for (int i = 0; i < remaining.size() && this->mParticles.size() < MAX_PARTICLES; i++)
@@ -120,7 +117,6 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 		this->mParticles.push(best->RandomCloseParticle(map));
 	}
 
-	cout << "returining best" << endl;
 	return (best);
 }
 
@@ -136,7 +132,6 @@ void ParticleManager::CreateRandomParticle(Map* map)
 		nY = rand() % map->getHeight();
 	}
 	while (map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED);
-
 
 	this->mParticles.push(new Particle(nX, nY, nYaw));
 }

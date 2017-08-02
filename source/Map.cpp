@@ -15,7 +15,7 @@ Map::Map(OccupancyGrid &grid) {
 	config = ConfigurationManager::Instance();
 
 	// Blow the grid
-	OccupancyGrid blownGrid = getBlownGrid(grid);
+	blownGrid = getBlownGrid(grid);
 
 	// Init the mat by the grid values
 	initMat(blownGrid);
@@ -40,7 +40,8 @@ void Map::rotateMat() {
 
 	cv::Mat resultMat = cv::Mat::zeros(mat.rows, mat.cols, mat.type());
 
-	Point2f center = Point2f( mat.cols/2, mat.rows/2 );
+	Point2f center = Point2f(ConfigurationManager::Instance()->start().x,
+			ConfigurationManager::Instance()->start().y);
 	double angle = -30.0;
 	double scale = 1.0;
 
