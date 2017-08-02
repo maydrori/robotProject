@@ -40,7 +40,7 @@ void RobotManager::Start()
 
 	int currX = this->mStartX;
 	int currY = this->mStartY;
-	int currYaw = ConfigurationManager::Instance()->start().x;
+	int currYaw = ConfigurationManager::Instance()->start().yaw;
 
 	// Start the execution of the robot
 	while (robot->isConnected())
