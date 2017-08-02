@@ -43,6 +43,7 @@ void DriveToWaypoint::Action(Particle* best)
 //		cout <<"drive angle="<<(TURNING_SPEED * nTurnMultiplier)<<endl;
 		// TODO: Check speed with a real robot
 		this->mRobot->sendSpeed(fWalkSpeedWhileTurning, TURNING_SPEED * nTurnMultiplier);
+//		sleep(1);
 	}
 }
 

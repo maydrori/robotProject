@@ -45,14 +45,14 @@ double Particle::ProbByScan(HamsterAPI::LidarScan scan, Map* map)
 void Particle::Update(HamsterAPI::LidarScan scan, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
 	// lets say it doesnt cross borders
-	double root = sqrt(deltaX * deltaX + deltaY * deltaY);
-	this->mX += root * cos((double)(this->mYaw * DEG2RAD));
-	this->mY += root * sin((double)(this->mYaw  * DEG2RAD));
-	this->mYaw = fmod((double)(this->mYaw + deltaYaw), 360.0);
+//	double root = sqrt(deltaX * deltaX + deltaY * deltaY);
+//	this->mX += root * cos((double)(this->mYaw * DEG2RAD));
+//	this->mY += root * sin((double)(this->mYaw  * DEG2RAD));
+//	this->mYaw = fmod((double)(this->mYaw + deltaYaw), 360.0);
 
-//	this->mX += deltaX;
-//	this->mY += deltaY;
-//	this->mYaw += deltaYaw;
+	this->mX += deltaX;
+	this->mY += deltaY;
+	this->mYaw += deltaYaw;
 
 	double measures = this->ProbByScan(scan, map);
 	mes = measures;
@@ -74,16 +74,19 @@ Particle* Particle::RandomCloseParticle(Map* map)
 
 	// Generate a random particle around the current particle (within PARTICLE_CREATE_IN_RADIUS)
 	int radius = PARTICLE_CREATE_IN_RADIUS;
+	int mapWidth = map->getWidth();
+	int mapHeight = map->getHeight();
 	if (radius < 2) radius = 2;
 	do
 	{
 		int rnd1 = rand();
 		int rnd2 = rand();
 		// Generate (x,y) in range (-PARTICLE_CREATE_IN_RADIUS, +PARTICLE_CREATE_IN_RADIUS)
-		nX = this->mX + (rnd1 % (radius * 2)) - radius;
-		nY = this->mY + (rnd2 % (radius * 2)) - radius;
-	}
-	while ((nX >= 0 && nY >= 0 && nX < map->getWidth() && nY < map->getHeight() && map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED));
+		nX = this->mX + ((rnd1 % (radius * 2))) - radius;
+		nY = this->mY + ((rnd2 % (radius * 2))) - radius;
+	} while ((nX < this->mX-radius || nY < this->mY-radius) ||
+			(nX > this->mX+radius) || (nY > this->mY+radius) ||
+			(map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED));
 
 	Particle* random = new Particle(nX, nY, nYaw);
 	random->mBelief = this->mBelief;

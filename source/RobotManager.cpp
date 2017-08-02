@@ -54,22 +54,29 @@ void RobotManager::Start()
 		if (best)
 		{
 			map->paintCell(best->getY(), best->getX(), 0, 180, 0);
-			deltaX = abs(best->mX - currX);
-			deltaY = abs(best->mY - currY);
-			deltaYaw = abs(best->getYaw() - currYaw);
+//			deltaX = abs(best->mX - currX);
+//			deltaY = abs(best->mY - currY);
+//			deltaYaw = abs(best->getYaw() - currYaw);
+
+			deltaX = currX - best->getX();
+			deltaY = currY - best->getY();
+			deltaYaw = currYaw - best->getYaw();
 
 			currX = best->mX;
 			currY = best->mY;
 			currYaw = best->getYaw();
-//			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY;
+			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY << endl;
 //			cout << "best=" << best->getX() << ", =" << best->getY() << endl;
 
 //			cout << "I have best!! " << endl;
 			// Update the waypoint manager
 			this->mWaypointManager->Update(best, &deltaX, &deltaY, &deltaYaw);
+			sleep(0.2);
+		} else {
+			deltaX = 0;
+			deltaY = 0;
+			deltaYaw = 0;
 		}
-
-		sleep(0.2);
 	}
 }
 
