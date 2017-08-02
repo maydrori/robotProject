@@ -6,10 +6,10 @@
 #include "Map.h"
 #include <HamsterAPIClientCPP/Hamster.h>
 
-#define PARTICLE_REMOVAL_THRESHOLD 			0.3
+#define PARTICLE_REMOVAL_THRESHOLD 			0.2
 #define PARTICLE_STRONG_SIGNAL_THRESHOLD	0.7
 #define PARTICLE_INIT_COUNT					100
-#define MAX_PARTICLES 						200
+#define MAX_PARTICLES 						500
 #define PARTICLE_DUPLICATION_COUNT			10
 
 using namespace HamsterAPI;
@@ -19,6 +19,7 @@ class ParticleManager
 {
 	private:
 		stack<Particle*> mParticles;
+		void init(Map* map, Particle* p);
 
 	public:
 		ParticleManager(Map* map);

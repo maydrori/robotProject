@@ -116,7 +116,7 @@ void WaypointManager::Update(Particle* best, int* deltaX, int* deltaY, int* delt
 //		*deltaX = dCol;
 //		*deltaY = dRow;
 		// TODO: How to get angle delta?
-		*deltaYaw = 0;
+//		*deltaYaw = 0;
 
 		int nAllowedRadius = ROBOT_REACHED_WAYPOINT_RADIUS;
 

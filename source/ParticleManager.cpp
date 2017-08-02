@@ -3,14 +3,23 @@
 
 ParticleManager::ParticleManager(Map* map)
 {
-	// Create a particle according to start position
+//	CreateRandomParticle(map);
 	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
-	this->mParticles.push(start);
+	this->init(map, start);
+}
+
+void ParticleManager::init(Map* map, Particle* p)
+{
+	// Create a particle according to start position
+//	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
+	this->mParticles.push(p);
 
 	// Create more like it
 	while (this->mParticles.size() < MAX_PARTICLES)
 	{
-		this->mParticles.push(start->RandomCloseParticle(map));
+		Particle* pNew = p->RandomCloseParticle(map);
+//		map->paintCell(p->getY(), p->getX(), 0, 100, 0);
+		this->mParticles.push(pNew);
 	}
 }
 
@@ -26,6 +35,9 @@ void ParticleManager::ResampleParticles(Map* map)
 	{
 		this->CreateRandomParticle(map);
 	}
+//	Particle* start = new Particle(ConfigurationManager::Instance()->start().x, ConfigurationManager::Instance()->start().y, ConfigurationManager::Instance()->start().yaw);
+//
+//	init(map, start);
 }
 
 bool ParticleCompareBeliefs(Particle* a, Particle* b)
@@ -35,9 +47,11 @@ bool ParticleCompareBeliefs(Particle* a, Particle* b)
 
 Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw)
 {
-//	cout << "Starting to update paritcle" <<  endl;
+	cout << "Starting to update paritcle" <<  endl;
 	vector<Particle*> remaining;
 	Particle* best;
+
+	HamsterAPI::LidarScan scan = robot->getLidarScan();
 
 	while (this->mParticles.size() > 0)
 	{
@@ -46,7 +60,8 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 		this->mParticles.pop();
 
 		// Update it
-		current->Update(robot, map, deltaX, deltaY, deltaYaw);
+		current->Update(scan, map, deltaX, deltaY, deltaYaw);
+		cout << "belief: " << current->belief() <<  endl;
 
 		// Check deletion conditions
 		// * removal threshold
@@ -70,18 +85,20 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 	if (remaining.size() == 0)
 	{
 		// TODO: Decide how to handle this shit
-//		cout << "Resampling!";
+		cout << "Resampling!" << endl;
 		this->ResampleParticles(map);
 		return NULL;
 	}
 
-//	cout << "Sorting" << endl;
+	cout << "Sorting" << endl;
 
 	// Sort the remaining particles vector by highest priority
 	std::sort(remaining.begin(), remaining.end(), ParticleCompareBeliefs);
 
 	// The best particle should be the first particle in the vector
 	best = remaining.front();
+
+	cout << "i have best belief: " << best->belief() << endl;
 
 	// Loop through the remaining particles and add them to the particle stack
 	for (int i = 0; i < remaining.size() && this->mParticles.size() < MAX_PARTICLES; i++)
@@ -103,6 +120,7 @@ Particle* ParticleManager::Update(HamsterAPI::Hamster* robot, Map* map, int delt
 		this->mParticles.push(best->RandomCloseParticle(map));
 	}
 
+	cout << "returining best" << endl;
 	return (best);
 }
 
@@ -117,9 +135,8 @@ void ParticleManager::CreateRandomParticle(Map* map)
 		nX = rand() % map->getWidth();
 		nY = rand() % map->getHeight();
 	}
-	while (map->getCell(nY, nX) == CELL_OCCUPIED);
+	while (map->getCell(nY, nX) == HamsterAPI::CELL_OCCUPIED);
 
-	nYaw = (rand() % 3600) / 10;
 
 	this->mParticles.push(new Particle(nX, nY, nYaw));
 }

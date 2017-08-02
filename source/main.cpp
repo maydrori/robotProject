@@ -190,17 +190,21 @@ int main() {
 		manager->Start();
 
 		bConnectionSuccedd = true;
-	//	while (hamster->isConnected()) {
-	//		map->show();
-	//		sleep(0.2);
-	//	}
+//		while (hamster->isConnected()) {
+//			map->show();
+//			sleep(0.2);
+//		}
 
 	}
-	catch(const HamsterAPI::HamsterError & message_error)
+//	catch(const HamsterAPI::HamsterError & message_error)
+//	{
+//		delete hamster;
+//
+//		cout << "shit2" << endl;
+//	}
+	catch(const std::exception& e)
 	{
-		delete hamster;
-
-		cout << "shit2" << endl;
+		cout << e.what() << endl;
 	}
 	}
 	return 0;
