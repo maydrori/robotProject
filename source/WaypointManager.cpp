@@ -25,7 +25,6 @@ void WaypointManager::SetDestination(int nStartX, int nStartY, int nGoalX, int n
 	PathPlanner pln(*mMap, nStartY, nStartX);
 	Path allPath = pln.computeShortestPath(nGoalY, nGoalX);
 	Path path = getWaypoints(allPath);
-cout << "finish a* and way points = " << path.size() << endl;
 
 	// Paint the all path in red
 	for (int i = 0; i < allPath.size(); ++i) {
@@ -97,27 +96,19 @@ Path WaypointManager::getWaypoints(Path path) {
 	return smooth;
 }
 
-void WaypointManager::Update(Particle* best, int* deltaX, int* deltaY, int* deltaYaw)
+void WaypointManager::Update(Particle* best)
 {
 	if (this->mCurrentTarget != NULL)
 	{
-		// Translate particle position to grid
-//		double fMapToGrid = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
-//		int nX = best->x() / fMapToGrid;
-//		int nY = best->y() / fMapToGrid;
-
 		// Calculate deltas
 		int dRow = abs(this->mCurrentTarget->row - best->getY());
 		int dCol = abs(this->mCurrentTarget->col - best->getX());
-//cout << "dRow=" << dRow<< ": this->mCurrentTarget->row=" << this->mCurrentTarget->row << ", best->getY()=" << best->getY() << endl;
-//cout << "dCol=" << dCol<< ":this->mCurrentTarget->col=" << this->mCurrentTarget->col << ", best->getX()=" << best->getX() << endl;
 
 		int nAllowedRadius = ROBOT_REACHED_WAYPOINT_RADIUS;
 
 		// If the current waypoint is the last waypoint, the robot must go to it exactly
 		if (this->mPaths.size() == 0 || this->mPaths.top() == NULL)
 		{
-			cout << "last?" << endl;
 			nAllowedRadius = 0;
 		}
 
@@ -128,7 +119,6 @@ void WaypointManager::Update(Particle* best, int* deltaX, int* deltaY, int* delt
 		}
 	}
 
-//	cout << "going to behave" << endl;
 	this->mBehaviour->Action(best);
 }
 
@@ -163,9 +153,6 @@ void WaypointManager::NextTarget(bool bHappy)
 	else
 	{
 		cout << "DriveToWayPoint" << endl;
-//		double fResolution = Configuration::Instance()->gridResolution() / Configuration::Instance()->mapResolution();
-//		int x = next->x() * fResolution;
-//		int y = next->y() * fResolution;
 		this->SetBehaviour(new DriveToWaypoint(this->mRobot, next->col, next->row));
 	}
 

@@ -18,18 +18,15 @@ class WaypointManager
 		stack<Node*> mPaths;
 		HamsterAPI::Hamster* mRobot;
 		Map* mMap;
-//		Graph* mGraph;
 		Node* mCurrentTarget;
 		Behaviour* mBehaviour;
-
 		void NextTarget(bool bHappy);
 		void SetBehaviour(Behaviour* behaviour);
 
 	public:
 		WaypointManager(HamsterAPI::Hamster* robot, Map* map);
-
 		void SetDestination(int nStartX, int nStartY, int nGoalX, int nGoalY);
-		void Update(Particle* best, int* deltaX, int* deltaY, int* deltaYaw);
+		void Update(Particle* best);
 		Path getWaypoints(Path path);
 };
 

@@ -8,18 +8,18 @@ DriveToWaypoint::DriveToWaypoint(HamsterAPI::Hamster* robot, int nDstX, int nDst
 {
 	this->mDstX = nDstX;
 	this->mDstY = nDstY;
+	done=false;
+	cout << "dst="<<nDstX<<","<<nDstY<<endl;
 }
 
 void DriveToWaypoint::Action(Particle* best)
 {
 	double fAngleToWaypoint = this->GetAngleToWaypoint(best);
+	if (!done) cout << "best="<<best->getX()<<","<<best->getY()<<","<<best->getYaw()<<",fAngleToWaypoint="<<fAngleToWaypoint<<endl;
 
-//	cout <<"best=" << best->mX << ","<<best->mY << ", fAngleToWaypoint=" << fAngleToWaypoint << endl;
 	// If the robot is facing towards the waypoint, drive straight
 	if (this->IsFacingDirection(fAngleToWaypoint, best))
 	{
-//		cout <<"drive straight"<<endl;
-		// TODO: Check speed with a real robot
 		this->mRobot->sendSpeed(MOVEMENT_SPEED, 0);
 	}
 	else
@@ -33,18 +33,11 @@ void DriveToWaypoint::Action(Particle* best)
 		// Get the multiplier which tells us which way to turn (multiply by robot's angular speed)
 		int nTurnMultiplier = sign(fCheapestAngle);
 
-		double fWalkSpeedWhileTurning = 0;
+		if (!done) cout << "turn angle="<<(fAbsAngle * nTurnMultiplier)<<endl;
 
-		// Check if we allow the robot to walk while turning
-		if (fAbsAngle <= MOVE_WHILE_TURNING_ANGLE_THRESHOLD)
-		{
-			fWalkSpeedWhileTurning = MOVEMENT_SPEED_WHILE_TURNING;
-		}
-//		cout <<"drive angle="<<(TURNING_SPEED * nTurnMultiplier)<<endl;
-		// TODO: Check speed with a real robot
-		this->mRobot->sendSpeed(fWalkSpeedWhileTurning, TURNING_SPEED * nTurnMultiplier);
-//		sleep(1);
+		this->mRobot->sendSpeed(MOVEMENT_SPEED_WHILE_TURNING, fAbsAngle * nTurnMultiplier);
 	}
+	done = true;
 }
 
 double DriveToWaypoint::GetCheapestAngleToTurn(double fTowardsAngle, Particle* best)
@@ -97,11 +90,10 @@ double DriveToWaypoint::GetAngleToWaypoint(Particle* best)
 	// Calculate delta from waypoint to robot
 	int dy = best->getY() - this->mDstY;
 	int dx = this->mDstX - best->getX();
-//cout << "dy="<< best->getY() <<"-" << this->mDstY << endl;
-//cout << "dx="<< this->mDstX <<"-" << best->getX() << endl;
+
 	// Calculate the angle between robot to waypoint
 	double fAngleToWaypoint = toDeg(atan2(dy, dx));
-//cout << fAngleToWaypoint << endl;
+
 	if (fAngleToWaypoint < 0)
 	{
 		fAngleToWaypoint += 360;

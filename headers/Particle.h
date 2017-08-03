@@ -16,47 +16,17 @@ class Particle
 {
 	private:
 		double mYaw;
+		int mX;
+		int mY;
 		double mBelief;
-
 		bool NeighboursOccupied(OccupancyGrid* grid, int x, int y, int level);
 
 	public:
-		int mX;
-		int mY;
-		double mes;
-		double mov;
-		double last;
-
 		Particle(int x, int y, double yaw);
 		virtual ~Particle();
-		double ProbByMove(int dx, int dy, double dyaw);
 		double ProbByScan(HamsterAPI::LidarScan scan, Map* map);
 		void Update(HamsterAPI::LidarScan scan, Map* map, int deltaX, int deltaY, int deltaYaw);
 		Particle* RandomCloseParticle(Map* map);
-
-		int DegToIndex(double deg, int angleRange, int laserCount)
-		{
-			// 0.36
-			double anglesPerLaser = ((double)angleRange / laserCount);
-
-			// 120
-			int anglesMidPoint = angleRange / 2;
-
-			// (deg + 120) / 0.36
-			return (deg + anglesMidPoint) / anglesPerLaser;
-		}
-
-		double IndexToDeg(int index, int angleRange, int laserCount)
-		{
-			// 0.36
-			double anglesPerLaser = ((double)angleRange / laserCount);
-
-			// 120
-			int anglesMidPoint = angleRange / 2;
-
-			// index * 0.36 - 120
-			return index * anglesPerLaser - anglesMidPoint;
-		}
 
 		double belief()
 		{

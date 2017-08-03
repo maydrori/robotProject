@@ -47,30 +47,31 @@ void RobotManager::Start()
 	{
 		this->map->show();
 
+		Pose pose = robot->getPose();
+
+		// The + 200 is because the robot is in the middle of the
+		// map so we need to shift the coordinates
+		int pixelX = (pose.getX() / map->blownGrid.getResolution()) + (map->getWidth() / 2) - 42;
+		int pixelY = (map->getHeight() / 2) - (pose.getY() / map->blownGrid.getResolution()) - 42;
+		Particle* best = new Particle(pixelX, pixelY, pose.getHeading());
+
 		// Update the particle manager and get the best particle
-		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
-//		Particle* best = NULL;
+//		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
 
 		if (best)
 		{
 			map->paintCell(best->getY(), best->getX(), 0, 180, 0);
-//			deltaX = abs(best->mX - currX);
-//			deltaY = abs(best->mY - currY);
-//			deltaYaw = abs(best->getYaw() - currYaw);
 
 			deltaX = currX - best->getX();
 			deltaY = currY - best->getY();
 			deltaYaw = currYaw - best->getYaw();
 
-			currX = best->mX;
-			currY = best->mY;
+			currX = best->getX();
+			currY = best->getY();
 			currYaw = best->getYaw();
-			cout << "deltaX=" << deltaX << ", deltaY=" << deltaY << endl;
-//			cout << "best=" << best->getX() << ", =" << best->getY() << endl;
 
-//			cout << "I have best!! " << endl;
 			// Update the waypoint manager
-			this->mWaypointManager->Update(best, &deltaX, &deltaY, &deltaYaw);
+			this->mWaypointManager->Update(best);
 			sleep(0.2);
 		} else {
 			deltaX = 0;
