@@ -8,6 +8,7 @@
 #include <iostream>
 #include "../headers/RobotManager.h"
 #include <HamsterAPIClientCPP/Hamster.h>
+#include <thread>
 
 using namespace std;
 
@@ -21,6 +22,22 @@ RobotManager::RobotManager(HamsterAPI::Hamster* robot, Map* mMap)
 	this->mGoalY = ConfigurationManager::Instance()->goal().y;
 	this->mWaypointManager = new WaypointManager(robot, map);
 	this->mParticleManager = new ParticleManager(map);
+	this->pose = NULL;
+}
+
+void RobotManager::printRobotPoseInterval() {
+	thread th([&]() {
+		while(true) {
+			std::this_thread::__sleep_for(chrono::seconds(3), chrono::nanoseconds(0));
+				if (pose) {
+					cout << "Robot position: (" <<
+						pose->getX() << "," <<
+						pose->getY() << "," <<
+						pose->getYaw() << ")" << endl;
+				}
+		}
+	});
+	th.detach();
 }
 
 void RobotManager::Start()
@@ -42,36 +59,39 @@ void RobotManager::Start()
 	int currY = this->mStartY;
 	int currYaw = ConfigurationManager::Instance()->start().yaw;
 
+	printRobotPoseInterval();
+
 	// Start the execution of the robot
 	while (robot->isConnected())
 	{
 		this->map->show();
 
-		Pose pose = robot->getPose();
+		// Get the current position of the robot
+		Pose robotPose = robot->getPose();
 
-		// The + 200 is because the robot is in the middle of the
-		// map so we need to shift the coordinates
-		int pixelX = (pose.getX() / map->blownGrid.getResolution()) + (map->getWidth() / 2) - 42;
-		int pixelY = (map->getHeight() / 2) - (pose.getY() / map->blownGrid.getResolution()) - 42;
-		Particle* best = new Particle(pixelX, pixelY, pose.getHeading());
+		// Calculate the pose on the grid
+		int pixelX = (robotPose.getX() / map->blownGrid.getResolution()) + (map->getWidth() / 2) - 42;
+		int pixelY = (map->getHeight() / 2) - (robotPose.getY() / map->blownGrid.getResolution()) - 42;
 
 		// Update the particle manager and get the best particle
+		pose = new Particle(pixelX, pixelY, robotPose.getHeading());
 //		Particle* best = this->mParticleManager->Update(this->robot, this->map, deltaX, deltaY, deltaYaw);
 
-		if (best)
+		if (pose)
 		{
-			map->paintCell(best->getY(), best->getX(), 0, 180, 0);
+			map->paintCell(pose->getY(), pose->getX(), 0, 180, 0);
 
-			deltaX = currX - best->getX();
-			deltaY = currY - best->getY();
-			deltaYaw = currYaw - best->getYaw();
+			deltaX = currX - pose->getX();
+			deltaY = currY - pose->getY();
+			deltaYaw = currYaw - pose->getYaw();
 
-			currX = best->getX();
-			currY = best->getY();
-			currYaw = best->getYaw();
+			currX = pose->getX();
+			currY = pose->getY();
+			currYaw = pose->getYaw();
 
 			// Update the waypoint manager
-			this->mWaypointManager->Update(best);
+			this->mWaypointManager->Update(pose);
+
 			sleep(0.2);
 		} else {
 			deltaX = 0;
@@ -80,6 +100,10 @@ void RobotManager::Start()
 		}
 	}
 }
+
+
+
+
 
 
 

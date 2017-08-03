@@ -1,4 +1,3 @@
 startLocation: 470 470 90
 goal: 500 450
 robotSize: 30 30
-MapResolutionCM: 0.05

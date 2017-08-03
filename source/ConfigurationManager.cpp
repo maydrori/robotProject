@@ -52,7 +52,6 @@ ConfigurationManager::ConfigurationManager(const char* szFile) : mConfigMap()
 	this->mGoal.y = this->ReadIntToken("goal", 1);
 	this->mRobotSize.height = this->ReadIntToken("robotSize", 0);
 	this->mRobotSize.width = this->ReadIntToken("robotSize", 1);
-	this->mMapResolutionCM = this->ReadFloat("MapResolutionCM");
 }
 
 string ConfigurationManager::ReadString(const char* szKey)

@@ -129,7 +129,6 @@ void WaypointManager::NextTarget(bool bHappy)
 	// If there are places to be, we shall go to the next place
 	if (!this->mPaths.empty())
 	{
-		cout << "get next way point" << endl;
 		next = this->mPaths.top();
 		this->mPaths.pop();
 	}
@@ -139,20 +138,18 @@ void WaypointManager::NextTarget(bool bHappy)
 	{
 		if (!bHappy)
 		{
-			cout << "StandInPosition" << endl;
 			// Stop the robot
 			this->SetBehaviour(new StandInPosition(this->mRobot));
 		}
 		else
 		{
-			cout << "Dance" << endl;
-			// The robot is happy
+			// Got to destination
 			this->SetBehaviour(new Dance(this->mRobot));
+			cout << "The robot has reached the destination!" << endl;
 		}
 	}
 	else
 	{
-		cout << "DriveToWayPoint" << endl;
 		this->SetBehaviour(new DriveToWaypoint(this->mRobot, next->col, next->row));
 	}
 

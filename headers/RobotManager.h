@@ -22,6 +22,8 @@ class RobotManager
 		int mStartY;
 		int mGoalX;
 		int mGoalY;
+		Particle* pose;
+		void printRobotPoseInterval();
 
 	public:
 		WaypointManager* mWaypointManager;

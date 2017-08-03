@@ -8,14 +8,11 @@ DriveToWaypoint::DriveToWaypoint(HamsterAPI::Hamster* robot, int nDstX, int nDst
 {
 	this->mDstX = nDstX;
 	this->mDstY = nDstY;
-	done=false;
-	cout << "dst="<<nDstX<<","<<nDstY<<endl;
 }
 
 void DriveToWaypoint::Action(Particle* best)
 {
 	double fAngleToWaypoint = this->GetAngleToWaypoint(best);
-	if (!done) cout << "best="<<best->getX()<<","<<best->getY()<<","<<best->getYaw()<<",fAngleToWaypoint="<<fAngleToWaypoint<<endl;
 
 	// If the robot is facing towards the waypoint, drive straight
 	if (this->IsFacingDirection(fAngleToWaypoint, best))
@@ -33,11 +30,8 @@ void DriveToWaypoint::Action(Particle* best)
 		// Get the multiplier which tells us which way to turn (multiply by robot's angular speed)
 		int nTurnMultiplier = sign(fCheapestAngle);
 
-		if (!done) cout << "turn angle="<<(fAbsAngle * nTurnMultiplier)<<endl;
-
 		this->mRobot->sendSpeed(MOVEMENT_SPEED_WHILE_TURNING, fAbsAngle * nTurnMultiplier);
 	}
-	done = true;
 }
 
 double DriveToWaypoint::GetCheapestAngleToTurn(double fTowardsAngle, Particle* best)

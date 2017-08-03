@@ -20,15 +20,13 @@ class ParticleManager
 	private:
 		Particle* mCurrentBest;
 		stack<Particle*> mParticles;
-		void init(Map* map, Particle* p);
+		void CreateRandomParticles(Map* map, Particle* p);
 
 	public:
 		ParticleManager(Map* map);
 		virtual ~ParticleManager();
 
 		Particle* Update(HamsterAPI::Hamster* robot, Map* map, int deltaX, int deltaY, int deltaYaw);
-		void ResampleParticles(Map* map);
-		void CreateRandomParticle(Map* map);
 };
 
 #endif

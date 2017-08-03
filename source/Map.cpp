@@ -28,7 +28,6 @@ void Map::initMat(OccupancyGrid &grid) {
 
 	mat = cv::Mat(grid.getHeight(), grid.getWidth(), CV_8UC3);
 
-	cout << "Grid size: " << grid.getHeight() << " * " << grid.getWidth() << endl;
 	for (int i=0; i<grid.getHeight(); i++) {
 		for (int j=0; j<grid.getWidth(); j++) {
 			initCell(grid,i,j);

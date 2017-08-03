@@ -12,13 +12,11 @@ class DriveToWaypoint : public Behaviour
 	private:
 		int mDstX;
 		int mDstY;
-bool done;
 		double GetCheapestAngleToTurn(double fTowardsAngle, Particle* best);
 		bool IsFacingDirection(double fAngle, Particle* best);
 		double GetAngleToWaypoint(Particle* best);
 	public:
 		DriveToWaypoint(HamsterAPI::Hamster* robot, int nDstX, int nDstY);
-
 		void Action(Particle* best);
 };
 

@@ -43,7 +43,6 @@ class ConfigurationManager
 		StartLocation mStartLocation;
 		Goal mGoal;
 		RobotSize mRobotSize;
-		double mMapResolutionCM;
 
 		std::string ReadString(const char* szKey);
 		int	ReadIntToken(const char* szKey, int nTokenNum);
@@ -73,11 +72,6 @@ class ConfigurationManager
 		RobotSize robotSize()
 		{
 			return (this->mRobotSize);
-		}
-
-		double mapResolution()
-		{
-			return (this->mMapResolutionCM);
 		}
 };
 
